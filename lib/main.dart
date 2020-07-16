@@ -1,13 +1,15 @@
+import 'package:design/addactivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'addevent.dart';
+import 'events.dart';
+import 'functions.dart';
+import 'values.dart';
 
 void main() {
   runApp(MyApp());
   // SystemChrome.setEnabledSystemUIOverlays([]);
 }
-
-List<Color> color = [Color(0xFF04294F)];
 
 class MyApp extends StatelessWidget {
   @override
@@ -20,7 +22,11 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: MyHomePage(),
-      routes: {'add': (context) => AddEvent()},
+      routes: {
+        'add': (context) => AddEvent(),
+        'event': (context) => Events(),
+        'addact': (context) => AddActivity(),
+      },
     );
   }
 }
@@ -31,14 +37,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  double h(double no) {
-    return no * (MediaQuery.of(context).size.height) / 812;
-  }
-
-  double w(double no) {
-    return no * (MediaQuery.of(context).size.width) / 375;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,8 +48,8 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(w(37)),
-                      bottomRight: Radius.circular(w(37))),
+                      bottomLeft: Radius.circular(w(37, context)),
+                      bottomRight: Radius.circular(w(37, context))),
                   color: color[0],
                 ),
                 child: Column(
@@ -67,13 +65,20 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: SizedBox(),
                             ),
                             Expanded(
-                              child: IconButton(
-                                icon: Icon(
-                                  Icons.menu,
-                                  color: Colors.white,
-                                  size: w(30),
-                                ),
-                                onPressed: () {},
+                              child: Builder(
+                                builder: (BuildContext context) {
+                                  return IconButton(
+                                    icon: Icon(
+                                      Icons.menu,
+                                      color: Colors.white,
+                                      size: w(30, context),
+                                    ),
+                                    onPressed: () {
+                                      Scaffold.of(context).openDrawer();
+                                    },
+                                  );
+                                  //Scaffold.of(context).openDrawer();
+                                },
                               ),
                               flex: 40,
                             ),
@@ -86,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 icon: Icon(
                                   Icons.notifications,
                                   color: Colors.white,
-                                  size: w(25),
+                                  size: w(25, context),
                                 ),
                                 onPressed: () {},
                               ),
@@ -98,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             ),
                             Expanded(
                               child: CircleAvatar(
-                                radius: w(20),
+                                radius: w(20, context),
                               ),
                               flex: 60,
                             ),
@@ -124,18 +129,18 @@ class _MyHomePageState extends State<MyHomePage> {
                                   style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       color: Colors.white,
-                                      fontSize: h(19)),
+                                      fontSize: h(19, context)),
                                 )),
                             Expanded(child: SizedBox(), flex: 30),
                             Expanded(
                                 flex: 46,
                                 child: Container(
-                                  height: h(46),
+                                  height: h(46, context),
                                   child: FlatButton(
                                     color: Colors.white,
                                     child: Icon(
                                       Icons.add,
-                                      size: h(20),
+                                      size: h(20, context),
                                       color: color[0],
                                     ),
                                     onPressed: () {
@@ -217,20 +222,26 @@ class _MyHomePageState extends State<MyHomePage> {
                         flex: 436,
                         child: Padding(
                           padding: EdgeInsets.symmetric(
-                            horizontal: w(31),
+                            horizontal: w(31, context),
                             vertical: 0,
                           ),
                           child: ListView.builder(
                             itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                margin: EdgeInsets.only(bottom: h(15)),
-                                height: h(58),
-                                child: Card(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(w(13))),
-                                  color: Colors.blue,
-                                  child: Text('Hy'),
+                              return InkWell(
+                                onTap: () {
+                                  Navigator.pushNamed(context, 'event');
+                                },
+                                child: Container(
+                                  margin:
+                                      EdgeInsets.only(bottom: h(15, context)),
+                                  height: h(58, context),
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            w(13, context))),
+                                    color: Colors.blue,
+                                    child: Text('Hy'),
+                                  ),
                                 ),
                               );
                             },
@@ -242,6 +253,97 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             )
           ],
+        ),
+      ),
+      drawer: Drawer(
+        child: Container(
+          padding: EdgeInsets.only(left: w(34, context), right: w(34, context)),
+          color: color[0],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: SizedBox(),
+                flex: 53,
+              ),
+              Expanded(
+                  child: MaterialButton(
+                    onPressed: () {},
+                    child: Icon(Icons.arrow_back, size: h(38, context)),
+                    color: color[0],
+                  ),
+                  flex: 38),
+              Expanded(
+                flex: 30,
+                child: SizedBox(),
+              ),
+              Expanded(
+                flex: 38,
+                child: ListTile(
+                  title: Text(
+                    'About Us',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(9, 8, 0, 9),
+                ),
+              ),
+              Expanded(
+                flex: 38,
+                child: ListTile(
+                  title: Text(
+                    'IEEE Mace Web',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(9, 8, 0, 9),
+                ),
+              ),
+              Expanded(
+                flex: 38,
+                child: ListTile(
+                  title: Text(
+                    'Broadcast Letter',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  contentPadding: EdgeInsets.fromLTRB(9, 8, 0, 9),
+                ),
+              ),
+              Expanded(
+                flex: 60,
+                child: SizedBox(),
+              ),
+              Expanded(
+                flex: 50,
+                child: Container(
+                  margin: EdgeInsets.only(left: 9),
+                  child: FlatButton(
+                    color: Colors.white,
+                    child: Text('Logout', style: TextStyle(color: color[0])),
+                    onPressed: () {},
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 354,
+                child: SizedBox(),
+              ),
+              Expanded(
+                flex: 19,
+                child: Container(
+                  width: double.infinity,
+                  child: Center(
+                    child: Text(
+                      'Created by IEEE Mace Team',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                flex: 101,
+                child: SizedBox(),
+              ),
+            ],
+          ),
         ),
       ),
     );
