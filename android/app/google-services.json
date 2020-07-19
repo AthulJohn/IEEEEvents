@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "534190393521",
+    "firebase_url": "https://mace-events-app.firebaseio.com",
+    "project_id": "mace-events-app",
+    "storage_bucket": "mace-events-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534190393521:android:2509a4f37777bc8b973a90",
+        "android_client_info": {
+          "package_name": "com.ieeemace.design"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "534190393521-vqepnbsth7bl9nf5bbd6eu7bg3fb4go0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ieeemace.design",
+            "certificate_hash": "aefea714302adfb8e651a7d4018864f3547b3ce8"
+          }
+        },
+        {
+          "client_id": "534190393521-1q9j8eintcqh9tk50uvld5n4p5ffta52.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDT1t6hRewPRIbeTO7vi9gePc5Ls1u9pQY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "534190393521-1q9j8eintcqh9tk50uvld5n4p5ffta52.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

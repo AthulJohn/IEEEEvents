@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'values.dart';
-import 'functions.dart';
+import 'package:design/values.dart';
+import 'package:design/functions.dart';
+import '../FIREBASE/database.dart';
 
 class AddActivity extends StatefulWidget {
   @override
@@ -8,7 +9,8 @@ class AddActivity extends StatefulWidget {
 }
 
 class _AddActivityState extends State<AddActivity> {
-  bool datecheck = false;
+  bool datecheck = false, firsttry = true;
+  Event addval = Event(0, '', '', DateTime.now(), DateTime.now(), '', []);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +28,9 @@ class _AddActivityState extends State<AddActivity> {
                   Icons.arrow_back,
                   size: h(38, context),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.pop(context);
+                },
               ),
             ),
             Expanded(
@@ -47,6 +51,11 @@ class _AddActivityState extends State<AddActivity> {
             Expanded(
                 flex: 36,
                 child: TextField(
+                  onChanged: (value) {
+                    setState(() {
+                      addval.name = value;
+                    });
+                  },
                   decoration: InputDecoration(
                       filled: true,
                       border: InputBorder.none,
@@ -72,6 +81,11 @@ class _AddActivityState extends State<AddActivity> {
             Expanded(
               flex: 144,
               child: TextField(
+                onChanged: (value) {
+                  setState(() {
+                    addval.desc = value;
+                  });
+                },
                 decoration: InputDecoration(
                     filled: true,
                     border: InputBorder.none,
@@ -106,14 +120,25 @@ class _AddActivityState extends State<AddActivity> {
                       children: <Widget>[
                         IconButton(
                           icon: Icon(Icons.calendar_today, size: 15),
-                          onPressed: () {
+                          onPressed: () async {
                             setState(() {
                               datecheck = false;
+                              firsttry = false;
                             });
+                            addval.updatedate = await showDatePicker(
+                                context: context,
+                                initialEntryMode: DatePickerEntryMode.calendar,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2018),
+                                lastDate: DateTime(2100));
+                            if (addval.updatedate == null)
+                              addval.updatedate = DateTime.now();
                           },
                         ),
                         Text(
-                          '',
+                          firsttry
+                              ? ''
+                              : '${addval.updatedate.day}-${addval.updatedate.month}-${addval.updatedate.year}',
                           style: TextStyle(
                             fontSize: 16,
                           ),
@@ -125,6 +150,7 @@ class _AddActivityState extends State<AddActivity> {
                     onChanged: (value) {
                       setState(() {
                         datecheck = value;
+                        if (value) addval.updatedate = DateTime.now();
                       });
                     },
                     activeColor: color[0],
@@ -140,7 +166,41 @@ class _AddActivityState extends State<AddActivity> {
               ),
             ),
             Expanded(
-              flex: 228,
+              flex: 32,
+              child: SizedBox(),
+            ),
+            Expanded(
+              child: FlatButton(
+                child: Text('Submit'),
+                color: color[0],
+                onPressed: () async {
+                  List name = ModalRoute.of(context).settings.arguments;
+
+                  setState(() {
+                    addval.index = name[1];
+                    addval.createdate = DateTime.now();
+                  });
+                  try {
+                    await CloudService(index: name[0]).updateDate(
+                      name[0],
+                      DateTime.now(),
+                    );
+                    await CloudService(index: (name[0])).updateactivity(
+                        addval.name,
+                        addval.desc,
+                        addval.createdate,
+                        addval.index,
+                        addval.updatedate);
+                  } catch (e) {
+                    print(e);
+                  }
+                  Navigator.pop(context);
+                },
+              ),
+              flex: 32,
+            ),
+            Expanded(
+              flex: 164,
               child: SizedBox(),
             ),
             Expanded(
