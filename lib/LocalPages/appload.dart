@@ -1,5 +1,6 @@
 import 'package:design/functions.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/animation.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
 class MainLoad extends StatefulWidget {
@@ -8,20 +9,52 @@ class MainLoad extends StatefulWidget {
 }
 
 class _MainLoadState extends State<MainLoad> {
-  String waiting = '';
+  List rotate = ['|', '/', '-', '\\'];
+  List<TextSpan> waiting = [];
+  bool conection = false;
   Future increase() async {
     await Future.delayed(
       Duration(
-        milliseconds: 2250,
+        milliseconds: 2600,
       ),
     );
-    setState(() {
-      waiting = '_';
-    });
-    for (int i = 0; i < 10; i++) {
-      await Future.delayed(Duration(milliseconds: 100));
+    for (int i = 0; i <= 10; i++) {
       setState(() {
-        waiting = '.  ' + waiting;
+        waiting = [
+          TextSpan(
+              text: '\n>>>Loading [${i * 10 + (10 - i)}%]  ${rotate[(i) % 4]}',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontSize: w(15, context),
+                  fontFamily: 'bitfont'))
+        ];
+      });
+      await Future.delayed(Duration(milliseconds: 100));
+    }
+    conection = await testcon();
+
+    if (conection) {
+      setState(() {
+        waiting += [
+          TextSpan(
+              text: '\n\n>>>\n\n>>>BUILD SUCCESS\n\n>>>\n\n>>>WELCOME!',
+              style: TextStyle(
+                  color: Colors.green,
+                  fontSize: w(15, context),
+                  fontFamily: 'bitfont'))
+        ];
+      });
+    } else {
+      setState(() {
+        waiting += [
+          TextSpan(
+              text:
+                  "\n\n>>>\n\n>>>CONNECTION LOST!\n\n>>>\n\n>>>Please check your phone's internet connection and try again... ",
+              style: TextStyle(
+                  color: Colors.red,
+                  fontSize: w(15, context),
+                  fontFamily: 'bitfont'))
+        ];
       });
     }
   }
@@ -46,9 +79,12 @@ class _MainLoadState extends State<MainLoad> {
                 Text(
                   '>>>',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: w(20, context),
-                  ),
+                      color: Colors.white,
+                      fontSize: w(
+                        15,
+                        context,
+                      ),
+                      fontFamily: 'bitfont'),
                 ),
                 TypewriterAnimatedTextKit(
                     isRepeatingAnimation: false,
@@ -60,12 +96,8 @@ class _MainLoadState extends State<MainLoad> {
                     speed: Duration(milliseconds: 75))
               ],
             ),
-            Text(
-              '$waiting',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: w(20, context),
-                  fontFamily: 'bitfont'),
+            RichText(
+              text: TextSpan(children: waiting),
             )
           ],
         ));

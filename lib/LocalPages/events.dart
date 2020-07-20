@@ -42,8 +42,12 @@ class _EventsState extends State<Events> {
                     color: Colors.white,
                   ),
                 ),
-                background: Image(
-                    image: NetworkImage('${event.theme}'), fit: BoxFit.cover),
+                background: ClipRRect(
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(30)),
+                  child: Image(
+                      image: NetworkImage('${event.theme}'), fit: BoxFit.cover),
+                ),
               ),
             ),
             ActList(event),
@@ -61,24 +65,53 @@ class ActList extends StatefulWidget {
 
 class _ActListState extends State<ActList> {
   List<Event> activities = [];
-  bool delete = false, load = false;
+  bool descac = false;
+  bool delete = false, load = false, loading = false;
   @override
   Widget build(BuildContext context) {
     activities = Provider.of<List<Event>>(context);
-    print('act=$activities');
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext conxt, int ind) {
           // activities.sort(
           //   (a, b) => a.updatedate.compareTo(b.updatedate),
           // );
-          if (ind == 0)
+          if (ind == 1)
+            return AnimatedSwitcher(
+                transitionBuilder: (child, animation) =>
+                    ScaleTransition(child: child, scale: animation),
+                duration: Duration(milliseconds: 300),
+                child: Container(
+                    key: Key('$descac'),
+                    child: descac
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.event.desc,
+                              style: TextStyle(fontSize: 18),
+                            ),
+                          )
+                        : Container()));
+          else if (ind == 0)
             return Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  Text('${widget.event.name}', style: TextStyle(fontSize: 22)),
+                  InkWell(
+                    child: Text('${widget.event.name}',
+                        style: TextStyle(fontSize: 28)),
+                    onTap: () {
+                      if (descac)
+                        setState(() {
+                          descac = false;
+                        });
+                      else
+                        setState(() {
+                          descac = true;
+                        });
+                    },
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
@@ -191,45 +224,57 @@ class _ActListState extends State<ActList> {
                         context: context,
                         barrierDismissible: true,
                         builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Confirm Delete'),
-                            actions: <Widget>[
-                              FlatButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      val = false;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('No')),
-                              FlatButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      val = true;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('Yes'))
-                            ],
+                          return ModalProgressHUD(
+                            inAsyncCall: loading,
+                            child: AlertDialog(
+                              title: Text('Confirm Delete'),
+                              actions: <Widget>[
+                                FlatButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        val = false;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('No')),
+                                FlatButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        val = true;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('Yes'))
+                              ],
+                            ),
                           );
                         },
                       );
                       return val;
                     },
                     onDismissed: (startToEnd) {
-                      //      CloudService().acdele(event.name, activities[ind].name);
+                      // setState(() {
+                      //   loading = true;
+                      // });
+                      CloudService()
+                          .acdele(widget.event.name, activities[ind - 2].name);
+                      // setState(() {
+                      //   loading = false;
+                      // });
                     },
-                    // background: Container(
-                    //     color: Colors.white38,
-                    //     child: widget.loged
-                    //         ? Column(
-                    //             mainAxisAlignment: MainAxisAlignment.center,
-                    //             crossAxisAlignment: CrossAxisAlignment.start,
-                    //             children: [
-                    //                 Icon(Icons.delete_outline,
-                    //                     size: 50, color: Colors.redAccent)
-                    //               ])
-                    //         : Container()),
+                    background: Container(
+                      color: Colors.white,
+                      child: // true//////////////////////TODO
+                          //?
+                          Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                            Icon(Icons.delete_outline,
+                                size: 50, color: Colors.redAccent)
+                          ]),
+                    ),
+                    // : Container()),
                     key: Key(''),
                     child: Card(
                       elevation: 5,
@@ -239,28 +284,26 @@ class _ActListState extends State<ActList> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ExpansionTile(
-                            trailing: Text('${activities[ind - 1].name}'),
                             title: Padding(
                               padding: const EdgeInsets.fromLTRB(25.0, 0, 8, 0),
                               child: Center(
                                   child: Text(
-                                '',
+                                '${activities[ind - 2].name}',
                                 //  activities[ind].name,
-                                style: TextStyle(
-                                    fontSize: 30, color: Colors.redAccent),
+                                style: TextStyle(fontSize: 30, color: color[0]),
                               )),
                             ),
                             children: <Widget>[
                               Text(
-                                activities[ind - 1].desc +
+                                activities[ind - 2].desc +
                                     "\nEvent Date: " +
-                                    "${activities[ind - 1].updatedate}",
+                                    "${activities[ind - 2].updatedate}",
                                 style: TextStyle(
                                     fontSize: 18, color: Colors.grey[600]),
                               ),
                               Text(
                                 '\nCreated: ' +
-                                    '${activities[ind - 1].createdate}',
+                                    '${activities[ind - 2].createdate}',
                                 style: TextStyle(color: Colors.grey[500]),
                               )
                             ]),
@@ -270,7 +313,7 @@ class _ActListState extends State<ActList> {
                 )
               : Container();
         },
-        childCount: getl(activities) + 1,
+        childCount: getl(activities) + 2,
       ),
     );
   }

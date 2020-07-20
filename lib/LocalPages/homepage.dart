@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -14,7 +15,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool loged = false;
+  bool loged = false,
+      grid = false,
+      all = true,
+      upcoming = false,
+      ongoing = false;
+  int dropvalue = 0;
   FirebaseUser user;
   Future checkuser() async {
     loged = await logincheck();
@@ -62,7 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     builder: (BuildContext context) {
                                       return IconButton(
                                         icon: Icon(
-                                          Icons.menu,
+                                          Icons.format_align_left,
                                           color: Colors.white,
                                           size: w(30, context),
                                         ),
@@ -140,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           color: Colors.white,
-                                          fontSize: h(19, context)),
+                                          fontSize: h(20, context)),
                                     )),
                                 Expanded(child: SizedBox(), flex: 30),
                                 Expanded(
@@ -183,19 +189,71 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 FlatButton(
-                                  child: Text('All Events'),
-                                  onPressed: () {},
-                                  color: Color(0xFFFFD8CC),
+                                  child: Text(
+                                    'All Events',
+                                    style: TextStyle(
+                                        color: all ? color[0] : Colors.grey,
+                                        fontStyle: all
+                                            ? FontStyle.italic
+                                            : FontStyle.normal,
+                                        fontWeight: all
+                                            ? FontWeight.bold
+                                            : FontWeight.normal),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      upcoming = false;
+                                      ongoing = false;
+                                      all = true;
+                                    });
+                                  },
+                                  color: Color(0xFFFFD8CC)
+                                      .withOpacity(all ? 1 : 0.5),
                                 ),
                                 FlatButton(
-                                  child: Text('Upcoming'),
-                                  onPressed: () {},
-                                  color: Color(0xFFFFF0CC),
+                                  child: Text(
+                                    'Upcoming',
+                                    style: TextStyle(
+                                        color:
+                                            upcoming ? color[0] : Colors.grey,
+                                        fontStyle: upcoming
+                                            ? FontStyle.italic
+                                            : FontStyle.normal,
+                                        fontWeight: upcoming
+                                            ? FontWeight.bold
+                                            : FontWeight.normal),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      upcoming = true;
+                                      ongoing = false;
+                                      all = false;
+                                    });
+                                  },
+                                  color: Color(0xFFFFF0CC)
+                                      .withOpacity(upcoming ? 1 : 0.5),
                                 ),
                                 FlatButton(
-                                  child: Text('Ongoing'),
-                                  onPressed: () {},
-                                  color: Color(0xFFCCEFF9),
+                                  child: Text(
+                                    'Ongoing',
+                                    style: TextStyle(
+                                        color: ongoing ? color[0] : Colors.grey,
+                                        fontStyle: ongoing
+                                            ? FontStyle.italic
+                                            : FontStyle.normal,
+                                        fontWeight: ongoing
+                                            ? FontWeight.bold
+                                            : FontWeight.normal),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      upcoming = false;
+                                      ongoing = true;
+                                      all = false;
+                                    });
+                                  },
+                                  color: Color(0xFFCCEFF9)
+                                      .withOpacity(ongoing ? 1 : 0.5),
                                 ),
                               ],
                             )),
@@ -209,21 +267,38 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
                                 DropdownButton(
-                                    value: 0,
+                                    value: dropvalue,
                                     items: [
                                       DropdownMenuItem(
-                                        child: Text('Upcoming Date'),
+                                        child: Text('Last Updated'),
                                         value: 0,
                                       ),
                                       DropdownMenuItem(
-                                        child: Text("Vere etho date"),
+                                        child: Text("Name"),
                                         value: 1,
-                                      )
+                                      ),
+                                      // DropdownMenuItem(
+                                      //   child: Text("Most Recent"),
+                                      //   value: 2,
+                                      // )
                                     ],
-                                    onChanged: (value) {}),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        dropvalue = value;
+                                      });
+                                    }),
                                 IconButton(
-                                  icon: Icon(Icons.grid_on),
-                                  onPressed: () {},
+                                  icon: grid
+                                      ? Icon(Icons.list)
+                                      : Icon(Icons.grid_on),
+                                  onPressed: () {
+                                    setState(() {
+                                      if (grid)
+                                        grid = false;
+                                      else
+                                        grid = true;
+                                    });
+                                  },
                                 ),
                               ],
                             )),
@@ -238,7 +313,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                 horizontal: w(31, context),
                                 vertical: 0,
                               ),
-                              child: Items(),
+                              child: Items(
+                                  dropvalue, grid, all ? 0 : upcoming ? 1 : 2),
                             )),
                       ],
                     ),
@@ -260,11 +336,13 @@ class DrawerObjects extends StatefulWidget {
 }
 
 class _DrawerObjectsState extends State<DrawerObjects> {
+  final String maceurl = 'https://ieee.macehub.in/';
+  final String newsurl =
+      ' https://issuu.com/melvinchooranolil/docs/ieee_mace_sb_official_newsletter_-_the_broadcast__';
   bool check = false;
   bool loginload = false;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     check = widget.loged;
   }
@@ -284,8 +362,14 @@ class _DrawerObjectsState extends State<DrawerObjects> {
             ),
             Expanded(
                 child: MaterialButton(
-                  onPressed: () {},
-                  child: Icon(Icons.arrow_back, size: h(38, context)),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: h(38, context),
+                    color: Colors.white,
+                  ),
                   color: color[0],
                 ),
                 flex: 38),
@@ -296,6 +380,9 @@ class _DrawerObjectsState extends State<DrawerObjects> {
             Expanded(
               flex: 38,
               child: ListTile(
+                onTap: () {
+                  Navigator.pushNamed(context, 'about');
+                },
                 title: Text(
                   'About Us',
                   style: TextStyle(color: Colors.white),
@@ -306,6 +393,13 @@ class _DrawerObjectsState extends State<DrawerObjects> {
             Expanded(
               flex: 38,
               child: ListTile(
+                onTap: () async {
+                  if (await canLaunch(maceurl)) {
+                    await launch(maceurl);
+                  } else {
+                    print("Error");
+                  }
+                },
                 title: Text(
                   'IEEE Mace Web',
                   style: TextStyle(color: Colors.white),
@@ -316,8 +410,15 @@ class _DrawerObjectsState extends State<DrawerObjects> {
             Expanded(
               flex: 38,
               child: ListTile(
+                onTap: () async {
+                  if (await canLaunch(newsurl)) {
+                    await launch(newsurl);
+                  } else {
+                    print("Error");
+                  }
+                },
                 title: Text(
-                  'Broadcast Letter',
+                  'NewsLetter',
                   style: TextStyle(color: Colors.white),
                 ),
                 contentPadding: EdgeInsets.fromLTRB(9, 8, 0, 9),
@@ -394,37 +495,116 @@ class _DrawerObjectsState extends State<DrawerObjects> {
 }
 
 class Items extends StatefulWidget {
+  final int sortval, select;
+  final bool gridval;
+  Items(this.sortval, this.gridval, this.select);
   @override
   _ItemsState createState() => _ItemsState();
 }
 
 class _ItemsState extends State<Items> {
   List<Event> events = List();
+  void assign() {
+    if (events != null) {
+      if (widget.select == 1)
+        setState(() {
+          events = events
+              .where((event) => event.active == 1 && event.done == 0)
+              .toList();
+        });
+      else if (widget.select == 2)
+        setState(() {
+          events = events.where((event) {
+            return event.active == 1 && event.done == 1;
+          }).toList();
+        });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     events = Provider.of<List<Event>>(context);
     if (events != null)
-      events.sort((a, b) => b.createdate.compareTo(a.createdate));
-    return ListView.builder(
-      itemBuilder: (BuildContext context, int index) {
-        return InkWell(
-          onTap: () {
-            print(events[index].name);
-            Navigator.pushNamed(context, 'event', arguments: events[index]);
-          },
-          child: Container(
-            margin: EdgeInsets.only(bottom: h(15, context)),
-            height: h(58, context),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(w(13, context))),
-              color: Colors.blue,
-              child: Text('${events[index].name}'),
+      widget.sortval == 0
+          ? events.sort((a, b) => b.updatedate.compareTo(a.updatedate))
+          : events.sort((a, b) => a.name.compareTo(b.name));
+    assign();
+    return AnimatedSwitcher(
+        switchInCurve: Curves.easeInCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (Widget child, Animation<double> animation) {
+          return FadeTransition(child: child, opacity: animation);
+        },
+        duration: Duration(seconds: 1),
+        child: GridView.builder(
+            key: Key('${widget.gridval}'),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: widget.gridval ? 2 : 1,
+              childAspectRatio: widget.gridval ? 1 : 4.5,
             ),
-          ),
-        );
-      },
-      itemCount: getl(events),
-    );
+            itemBuilder: (BuildContext context, int index) {
+              return InkWell(
+                onTap: () {
+                  print(events[index].name);
+                  Navigator.pushNamed(context, 'event',
+                      arguments: events[index]);
+                },
+                child: Container(
+                  key: Key('${widget.gridval}'),
+                  constraints: BoxConstraints(
+                      maxHeight:
+                          widget.gridval ? h(150, context) : h(58, context)),
+                  margin: EdgeInsets.only(bottom: h(15, context)),
+                  height: widget.gridval ? h(150, context) : h(58, context),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(w(13, context))),
+                    color: events[index].active == 1
+                        ? events[index].done == 1
+                            ? Color(0xFF6DD3F0)
+                            : Color(0xFFFFCC51)
+                        : Color(0xFFF0F0F0),
+                    child: widget.gridval
+                        ? Column(children: <Widget>[
+                            Expanded(
+                              flex: 2,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16),
+                                    image: DecorationImage(
+                                        fit: BoxFit.cover,
+                                        image: NetworkImage(
+                                            '${events[index].theme}')),
+                                    color: color[0]),
+                              ),
+                            ),
+                            Expanded(
+                                child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Text('${events[index].name}',
+                                        style: TextStyle(
+                                          fontSize: h(24, context),
+                                        ))))
+                          ])
+                        : Container(
+                            padding: EdgeInsets.all(
+                              w(10, context),
+                            ),
+                            child: Align(
+                              heightFactor: 1.5,
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                '${events[index].name}',
+                                style: TextStyle(
+                                  fontSize: h(24, context),
+                                ),
+                              ),
+                            ),
+                          ),
+                  ),
+                ),
+              );
+            },
+            itemCount: getl(events)));
   }
 }

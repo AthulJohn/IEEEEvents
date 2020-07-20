@@ -7,13 +7,14 @@ class Event {
   String name;
   DateTime createdate;
   DateTime updatedate;
+  //Future<DateTime> recent;
   String desc;
   String theme;
-  int active;
+  int active, done;
   List<File> images;
   Event(this.index, this.name, this.desc, this.createdate, this.updatedate,
       this.theme, this.images,
-      {this.active = 0});
+      {this.active = 0, this.done = 0});
 }
 
 Future<bool> logincheck() async {
@@ -39,10 +40,11 @@ Future<bool> testcon() async {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        print('trueee');
         return true;
       }
     } on SocketException catch (_) {
-      // print('Executed');
+      print('Executed');
       return false;
     }
   }

@@ -16,7 +16,9 @@ class CloudService {
       Firestore.instance.collection('events');
 
   Future updateDate(String name, DateTime udate) async {
-    return await eventCollection.document(name).updateData({'update': udate});
+    return await eventCollection
+        .document(name)
+        .updateData({'update': udate, 'done': 1});
   }
 
   Future updateData(String name, String desc, DateTime cdate, DateTime udate,
@@ -30,6 +32,8 @@ class CloudService {
       'update': udate,
       'index': ind,
       'theme': images[0],
+      'active': 1,
+      'done': 0,
     });
     if (getl(image) != 0) {
       for (int i = 0; i < images.length; i++) {
@@ -102,19 +106,23 @@ class CloudService {
       'create': cdate,
       'index': acindex,
       'activitydate': dt,
-      'active': 1
     });
   }
 
   List<Event> _listfromsnap(QuerySnapshot snapshot) {
     return snapshot.documents.map((doc) {
       return Event(
-          doc.data['index'] ?? 0,
-          doc.data['name'] ?? '',
-          doc.data['desc'] ?? '',
-          doc.data['create'].toDate() ?? DateTime.now(),
-          doc.data['update'].toDate() ?? DateTime.now(),
-          doc.data['theme'], []);
+        doc.data['index'] ?? 0,
+        doc.data['name'] ?? '',
+        doc.data['desc'] ?? '',
+        doc.data['create'].toDate() ?? DateTime.now(),
+        doc.data['update'].toDate() ?? DateTime.now(),
+        doc.data['theme'],
+        [],
+        active: doc.data['active'],
+        done: doc.data['done'],
+        //recent: getRecent(doc.data['name'])
+      );
     }).toList();
   }
 
@@ -126,9 +134,7 @@ class CloudService {
           doc.data['desc'] ?? '',
           doc.data['create'].toDate() ?? DateTime.now(),
           doc.data['activitydate'].toDate() ?? DateTime.now(),
-          '',
-          [],
-          active: doc.data['active'] ?? 0);
+          '', []);
     }).toList();
   }
 
@@ -176,7 +182,7 @@ class CloudService {
     await eventCollection.document(nm).delete();
   }
 
-  void acdele(String nm, String ac) async {
+  Future acdele(String nm, String ac) async {
     // await Firestore.instance.runTransaction((Transaction myTransaction) async{
     //   await myTransaction.delete(snapshot.data.documents[nm].reference);
     //});
@@ -186,6 +192,7 @@ class CloudService {
         .collection('activity')
         .document(ac)
         .delete();
+    await eventCollection.document(nm).updateData({'done': 0});
   }
 
   Stream<List<Event>> get events {

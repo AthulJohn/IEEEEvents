@@ -3,9 +3,8 @@ import 'package:design/LocalPages/addevent.dart';
 import 'package:design/LocalPages/appload.dart';
 import 'package:design/LocalPages/events.dart';
 import 'package:design/LocalPages/homepage.dart';
-import 'package:design/LocalPages/update.dart';
+import 'LocalPages/about.dart';
 import 'package:design/functions.dart';
-import 'package:design/values.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -29,6 +28,7 @@ class MyApp extends StatelessWidget {
         'add': (context) => AddEvent(),
         'event': (context) => Events(),
         'addact': (context) => AddActivity(),
+        'about': (context) => About(),
       },
     );
   }
@@ -41,16 +41,22 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Widget tobereturned = MainLoad();
+  bool first = true;
+  bool connection;
   Future assign() async {
-    await Future.delayed(Duration(seconds: 4));
-    setState(() {
-      tobereturned = MyHomePage();
-    });
+    connection = await testcon();
+    if (connection) {
+      first = false;
+      await Future.delayed(Duration(milliseconds: 5500));
+      setState(() {
+        tobereturned = MyHomePage();
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    assign();
+    if (first) assign();
     return tobereturned;
   }
 }
