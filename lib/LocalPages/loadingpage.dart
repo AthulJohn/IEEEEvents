@@ -5,7 +5,7 @@ import '../values.dart';
 import '../functions.dart';
 
 class Loading extends StatelessWidget {
-  List<String> toshow = [
+  final List<String> toshow = [
     'did You Know that in the 1980s, an IBM computer wasn’t considered 100% compatible unless it could run Microsoft Flight Simulator',
     'did you know that the first computer mouse was invented by Doug Engelbart in around 1964 and was made of wood.',
     'did you know that Google actually have a "Wedding Planner" site.',
@@ -19,7 +19,7 @@ class Loading extends StatelessWidget {
     'did you know that Engineering is heavily involved in sports.',
     'did you know that the Engineers in Canada receive an Iron Ring to remind them to have humility. It is in memory of a bridge that collapsed twice due to incorrect calculations involving iron.'
   ];
-  Random rand = Random();
+  final Random rand = Random();
   @override
   Widget build(BuildContext context) {
     return Container(
