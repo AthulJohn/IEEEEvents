@@ -1,22 +1,24 @@
 import 'package:design/LocalPages/addactivity.dart';
 import 'package:design/LocalPages/addevent.dart';
-import 'package:design/LocalPages/appload.dart';
+import 'package:design/Appload/apploadcs.dart';
 import 'package:design/LocalPages/events.dart';
 import 'package:design/LocalPages/homepage.dart';
+import 'package:flutter/services.dart';
+import 'package:design/values.dart';
 import 'LocalPages/about.dart';
 import 'package:design/functions.dart';
 import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
-  // SystemChrome.setEnabledSystemUIOverlays([]);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Mace Events',
       theme: ThemeData(
         fontFamily: 'Lato',
         primaryColor: Color(0xFF04294F),
@@ -40,14 +42,15 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  Widget tobereturned = MainLoad();
+  Widget tobereturned = homeWidget;
+  int dur = dura;
   bool first = true;
   bool connection;
   Future assign() async {
     connection = await testcon();
     if (connection) {
       first = false;
-      await Future.delayed(Duration(milliseconds: 5500));
+      await Future.delayed(Duration(milliseconds: dur));
       setState(() {
         tobereturned = MyHomePage();
       });

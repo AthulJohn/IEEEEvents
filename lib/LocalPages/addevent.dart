@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import '../FIREBASE/database.dart';
 import 'loadingpage.dart';
+import '../Widgets/RoundButton.dart';
 import '../functions.dart';
+import '../values.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -42,18 +44,25 @@ class _AddEventState extends State<AddEvent> {
                   children: <Widget>[
                     Expanded(child: SizedBox(), flex: 22),
                     Expanded(
-                        child: FlatButton(
-                          color: Color(0xFF04294F),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          shape: CircleBorder(side: BorderSide()),
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 20,
-                            color: Colors.white,
-                          ),
-                        ),
+                        child: RoundButton(
+                            color: color[0],
+                            icon: Icon(Icons.arrow_back, color: Colors.white),
+                            onpressed: () {
+                              Navigator.pop(context);
+                            },
+                            size: h(50, context)),
+                        // child: FlatButton(
+                        //   color: Color(0xFF04294F),
+                        //   onPressed: () {
+                        //     Navigator.pop(context);
+                        //   },
+                        //   shape: CircleBorder(side: BorderSide()),
+                        //   child: Icon(
+                        //     Icons.arrow_back,
+                        //     size: 20,
+                        //     color: Colors.white,
+                        //   ),
+                        // ),
                         flex: 38),
                     Expanded(child: SizedBox(), flex: 30),
                     Expanded(child: Text('Event Name'), flex: 19),
@@ -67,8 +76,15 @@ class _AddEventState extends State<AddEvent> {
                             });
                           },
                           decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 0, style: BorderStyle.none),
+                                borderRadius: const BorderRadius.all(
+                                  const Radius.circular(10.0),
+                                ),
+                              ),
                               filled: true,
-                              border: InputBorder.none,
+                              //border: InputBorder.none,
                               fillColor: Color(0xFFEFEFEF)),
                         )),
                     Expanded(flex: 24, child: SizedBox()),
@@ -87,8 +103,14 @@ class _AddEventState extends State<AddEvent> {
                           },
                           maxLines: 4,
                           decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 0, style: BorderStyle.none),
+                                borderRadius: BorderRadius.circular(
+                                  10,
+                                ),
+                              ),
                               filled: true,
-                              border: InputBorder.none,
                               fillColor: Color(0xFFEFEFEF)),
                         )),
                     // Expanded(flex: 32, child: SizedBox()),
@@ -114,8 +136,9 @@ class _AddEventState extends State<AddEvent> {
                                     style: TextStyle(color: Colors.grey[400])))
                             : Container(),
                         Container(
-                            decoration:
-                                BoxDecoration(border: Border.all(width: 2)),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: 2),
+                                borderRadius: BorderRadius.circular(10)),
                             child: GridView(
                               padding: EdgeInsets.all(8),
                               gridDelegate:
@@ -175,6 +198,8 @@ class _AddEventState extends State<AddEvent> {
                     Expanded(
                         flex: 45,
                         child: FlatButton(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                           color: Color(0xFF04294F),
                           child: Text('Submit',
                               style: TextStyle(color: Colors.white)),

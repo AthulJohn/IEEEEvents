@@ -1,3 +1,4 @@
+import 'package:design/Widgets/RoundButton.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -150,25 +151,36 @@ class _MyHomePageState extends State<MyHomePage> {
                                     )),
                                 Expanded(child: SizedBox(), flex: 30),
                                 Expanded(
-                                    flex: 46,
-                                    child: Container(
-                                      height: h(46, context),
-                                      child: FlatButton(
-                                        color: Colors.white,
-                                        child: Icon(
-                                          Icons.add,
-                                          size: h(20, context),
-                                          color: color[0],
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pushNamed(context, 'add',
-                                              arguments: getl(events));
-                                        },
-                                        shape: CircleBorder(
-                                            side: BorderSide(
-                                                color: Colors.white)),
-                                      ),
-                                    )),
+                                  flex: 46,
+                                  // child: Container(
+                                  //   height: h(46, context),
+                                  child: loged
+                                      ? RoundButton(
+                                          color: Colors.white,
+                                          onpressed: () {
+                                            Navigator.pushNamed(context, 'add',
+                                                arguments: getl(events));
+                                          },
+                                          icon: Icon(Icons.add),
+                                          size: w(50, context),
+                                        )
+                                      : Container(),
+                                  // child: FlatButton(
+                                  //   color: Colors.white,
+                                  //   child: Icon(
+                                  //     Icons.add,
+                                  //     size: h(20, context),
+                                  //     color: color[0],
+                                  //   ),
+                                  //   onPressed: () {
+                                  //     Navigator.pushNamed(context, 'add',
+                                  //         arguments: getl(events));
+                                  //   },
+                                  //   shape: CircleBorder(
+                                  //       side: BorderSide(
+                                  //           color: Colors.white)),
+                                  // ),
+                                ), //),
                                 Expanded(flex: 50, child: SizedBox())
                               ],
                             )),
@@ -259,14 +271,15 @@ class _MyHomePageState extends State<MyHomePage> {
                             )),
                         Expanded(
                           child: SizedBox(),
-                          flex: 42,
+                          flex: 27,
                         ),
                         Expanded(
-                            flex: 25,
+                            flex: 55,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
                                 DropdownButton(
+                                    underline: Container(),
                                     value: dropvalue,
                                     items: [
                                       DropdownMenuItem(
@@ -287,11 +300,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                         dropvalue = value;
                                       });
                                     }),
-                                IconButton(
+                                RoundButton(
+                                  color: Colors.white,
                                   icon: grid
                                       ? Icon(Icons.list)
                                       : Icon(Icons.grid_on),
-                                  onPressed: () {
+                                  size: h(50, context),
+                                  onpressed: () {
                                     setState(() {
                                       if (grid)
                                         grid = false;
@@ -300,11 +315,24 @@ class _MyHomePageState extends State<MyHomePage> {
                                     });
                                   },
                                 ),
+                                // IconButton(
+                                //   icon: grid
+                                //       ? Icon(Icons.list)
+                                //       : Icon(Icons.grid_on),
+                                //   onPressed: () {
+                                //     setState(() {
+                                //       if (grid)
+                                //         grid = false;
+                                //       else
+                                //         grid = true;
+                                //     });
+                                //   },
+                                // ),
                               ],
                             )),
                         Expanded(
                           child: SizedBox(),
-                          flex: 39,
+                          flex: 24,
                         ),
                         Expanded(
                             flex: 436,
@@ -361,7 +389,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
               flex: 53,
             ),
             Expanded(
-                child: MaterialButton(
+                child: FlatButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -378,7 +406,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
               child: SizedBox(),
             ),
             Expanded(
-              flex: 38,
+              flex: 58,
               child: ListTile(
                 onTap: () {
                   Navigator.pushNamed(context, 'about');
@@ -391,7 +419,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
               ),
             ),
             Expanded(
-              flex: 38,
+              flex: 58,
               child: ListTile(
                 onTap: () async {
                   if (await canLaunch(maceurl)) {
@@ -408,7 +436,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
               ),
             ),
             Expanded(
-              flex: 38,
+              flex: 58,
               child: ListTile(
                 onTap: () async {
                   if (await canLaunch(newsurl)) {
@@ -425,7 +453,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
               ),
             ),
             Expanded(
-              flex: 60,
+              flex: 80,
               child: SizedBox(),
             ),
             Expanded(
@@ -468,7 +496,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
               ),
             ),
             Expanded(
-              flex: 354,
+              flex: 274,
               child: SizedBox(),
             ),
             Expanded(
@@ -529,82 +557,98 @@ class _ItemsState extends State<Items> {
           ? events.sort((a, b) => b.updatedate.compareTo(a.updatedate))
           : events.sort((a, b) => a.name.compareTo(b.name));
     assign();
-    return AnimatedSwitcher(
-        switchInCurve: Curves.easeInCubic,
-        switchOutCurve: Curves.easeInCubic,
-        transitionBuilder: (Widget child, Animation<double> animation) {
-          return FadeTransition(child: child, opacity: animation);
-        },
-        duration: Duration(seconds: 1),
-        child: GridView.builder(
-            key: Key('${widget.gridval}'),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: widget.gridval ? 2 : 1,
-              childAspectRatio: widget.gridval ? 1 : 4.5,
-            ),
-            itemBuilder: (BuildContext context, int index) {
-              return InkWell(
-                onTap: () {
-                  print(events[index].name);
-                  Navigator.pushNamed(context, 'event',
-                      arguments: events[index]);
-                },
-                child: Container(
-                  key: Key('${widget.gridval}'),
-                  constraints: BoxConstraints(
-                      maxHeight:
-                          widget.gridval ? h(150, context) : h(58, context)),
-                  margin: EdgeInsets.only(bottom: h(15, context)),
-                  height: widget.gridval ? h(150, context) : h(58, context),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(w(13, context))),
-                    color: events[index].active == 1
-                        ? events[index].done == 1
-                            ? Color(0xFF6DD3F0)
-                            : Color(0xFFFFCC51)
-                        : Color(0xFFF0F0F0),
-                    child: widget.gridval
-                        ? Column(children: <Widget>[
-                            Expanded(
-                              flex: 2,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16),
-                                    image: DecorationImage(
-                                        fit: BoxFit.cover,
-                                        image: NetworkImage(
-                                            '${events[index].theme}')),
-                                    color: color[0]),
-                              ),
-                            ),
-                            Expanded(
-                                child: Container(
-                                    padding: EdgeInsets.all(10),
-                                    child: Text('${events[index].name}',
-                                        style: TextStyle(
-                                          fontSize: h(24, context),
-                                        ))))
-                          ])
-                        : Container(
-                            padding: EdgeInsets.all(
-                              w(10, context),
-                            ),
-                            child: Align(
-                              heightFactor: 1.5,
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                '${events[index].name}',
-                                style: TextStyle(
-                                  fontSize: h(24, context),
+    return getl(events) != 0
+        ? AnimatedSwitcher(
+            switchInCurve: Curves.easeInCubic,
+            switchOutCurve: Curves.easeInCubic,
+            transitionBuilder: (Widget child, Animation<double> animation) {
+              return FadeTransition(child: child, opacity: animation);
+            },
+            duration: Duration(seconds: 1),
+            child: GridView.builder(
+                key: Key('${widget.gridval}'),
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: widget.gridval ? 2 : 1,
+                  childAspectRatio: widget.gridval ? 1 : 4.5,
+                ),
+                itemBuilder: (BuildContext context, int index) {
+                  return InkWell(
+                    onTap: () {
+                      print(events[index].name);
+                      Navigator.pushNamed(context, 'event',
+                          arguments: events[index]);
+                    },
+                    child: Container(
+                      key: Key('${widget.gridval}'),
+                      constraints: BoxConstraints(
+                          maxHeight: widget.gridval
+                              ? h(150, context)
+                              : h(58, context)),
+                      margin: EdgeInsets.only(bottom: h(15, context)),
+                      height: widget.gridval ? h(150, context) : h(58, context),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(w(13, context))),
+                        color: events[index].active == 1
+                            ? events[index].done == 1
+                                ? Color(0xFF6DD3F0)
+                                : Color(0xFFFFCC51)
+                            : Color(0xFFF0F0F0),
+                        child: widget.gridval
+                            ? Column(children: <Widget>[
+                                Expanded(
+                                  flex: 2,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(16),
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(
+                                                '${events[index].theme}')),
+                                        color: color[0]),
+                                  ),
+                                ),
+                                Expanded(
+                                    child: Container(
+                                        padding: EdgeInsets.all(10),
+                                        child: Text('${events[index].name}',
+                                            style: TextStyle(
+                                              fontSize: h(24, context),
+                                            ))))
+                              ])
+                            : Container(
+                                padding: EdgeInsets.all(
+                                  w(10, context),
+                                ),
+                                child: Align(
+                                  heightFactor: 1.5,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    '${events[index].name}',
+                                    style: TextStyle(
+                                      fontSize: h(24, context),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                  ),
-                ),
-              );
-            },
-            itemCount: getl(events)));
+                      ),
+                    ),
+                  );
+                },
+                itemCount: getl(events)))
+        : events == null
+            ? Center(child: Container(child: Text('Fetching data...')))
+            : (Container(
+                child: Center(
+                    child: Column(
+                children: <Widget>[
+                  Container(
+                      height: h(300, context),
+                      child: Image.asset('assets/empty.gif')),
+                  Text("There's Nothing Here...",
+                      style: TextStyle(fontSize: h(30, context))),
+                ],
+              ))));
   }
 }

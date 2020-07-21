@@ -222,6 +222,7 @@ class _UpdateState extends State<Update> {
                           onPressed: () async {
                             setState(() {
                               load = true;
+                              addval.active = switchvalue ? 1 : 0;
                             });
                             try {
                               await CloudService().editData(addval, activities);

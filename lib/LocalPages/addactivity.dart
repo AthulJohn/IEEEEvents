@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:design/values.dart';
 import 'package:design/functions.dart';
 import '../FIREBASE/database.dart';
+import '../Widgets/RoundButton.dart';
 import 'loadingpage.dart';
 
 class AddActivity extends StatefulWidget {
@@ -20,25 +21,23 @@ class _AddActivityState extends State<AddActivity> {
             resizeToAvoidBottomInset: false,
             body: SafeArea(
               child: Container(
-                margin: EdgeInsets.fromLTRB(25, 0, 39, 0),
+                margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Expanded(flex: 22, child: SizedBox()),
                     Expanded(
-                      flex: 38,
-                      child: MaterialButton(
-                        child: Icon(
-                          Icons.arrow_back,
-                          size: h(38, context),
-                        ),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
+                      flex: 48,
+                      child: RoundButton(
+                          color: color[0],
+                          icon: Icon(Icons.arrow_back, color: Colors.white),
+                          onpressed: () {
+                            Navigator.pop(context);
+                          },
+                          size: h(50, context)),
                     ),
                     Expanded(
-                      flex: 48,
+                      flex: 38,
                       child: SizedBox(),
                     ),
                     Expanded(
@@ -62,7 +61,13 @@ class _AddActivityState extends State<AddActivity> {
                           },
                           decoration: InputDecoration(
                               filled: true,
-                              border: InputBorder.none,
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                    width: 0, style: BorderStyle.none),
+                                borderRadius: const BorderRadius.all(
+                                  const Radius.circular(10.0),
+                                ),
+                              ),
                               fillColor: Color(0xFFEFEFEF)),
                         )),
                     Expanded(
@@ -92,7 +97,13 @@ class _AddActivityState extends State<AddActivity> {
                         },
                         decoration: InputDecoration(
                             filled: true,
-                            border: InputBorder.none,
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(width: 0, style: BorderStyle.none),
+                              borderRadius: const BorderRadius.all(
+                                const Radius.circular(10.0),
+                              ),
+                            ),
                             fillColor: Color(0xFFEFEFEF)),
                         maxLines: 4,
                       ),
@@ -118,8 +129,10 @@ class _AddActivityState extends State<AddActivity> {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: <Widget>[
                           Container(
-                            color: Color(0xFFEFEFEF),
-                            width: 151,
+                            decoration: BoxDecoration(
+                                color: Color(0xFFEFEFEF),
+                                borderRadius: BorderRadius.circular(10)),
+                            width: w(151, context),
                             child: Row(
                               children: <Widget>[
                                 IconButton(
@@ -163,9 +176,9 @@ class _AddActivityState extends State<AddActivity> {
                             value: datecheck,
                           ),
                           Text(
-                            'Use Current Date',
+                            "Today's Date",
                             style: TextStyle(
-                              fontSize: 16,
+                              fontSize: w(16, context),
                             ),
                           ),
                         ],
@@ -177,6 +190,8 @@ class _AddActivityState extends State<AddActivity> {
                     ),
                     Expanded(
                       child: FlatButton(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         child: Text('Submit',
                             style: TextStyle(color: Colors.white)),
                         color: color[0],

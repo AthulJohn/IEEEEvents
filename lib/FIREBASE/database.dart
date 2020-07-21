@@ -46,7 +46,7 @@ class CloudService {
             .document(name)
             .collection('imagepath')
             .document('$i')
-            .setData({'path': '$name/$i'});
+            .setData({'path': '$name/${Path.basename(image[i].path)}'});
       }
     }
     return;
@@ -148,34 +148,34 @@ class CloudService {
     // await Firestore.instance.runTransaction((Transaction myTransaction) async{
     //   await myTransaction.delete(snapshot.data.documents[nm].reference);
     //});
-    await eventCollection
-        .document(nm)
-        .collection('activity')
-        .getDocuments()
-        .then((snapshot) {
-      for (DocumentSnapshot ds in snapshot.documents) {
-        ds.reference.delete();
-      }
-    });
-    await eventCollection
-        .document(nm)
-        .collection('images')
-        .getDocuments()
-        .then((snapshot) {
-      for (DocumentSnapshot ds in snapshot.documents) {
-        ds.reference.delete();
-      }
-    });
-    await eventCollection
-        .document(nm)
-        .collection('imagepath')
-        .getDocuments()
-        .then((snapshot) {
-      for (DocumentSnapshot ds in snapshot.documents) {
-        FirebaseStorage.instance.ref().child(ds.data['path']).delete();
-        ds.reference.delete();
-      }
-    });
+    // await eventCollection
+    //     .document(nm)
+    //     .collection('activity')
+    //     .getDocuments()
+    //     .then((snapshot) {
+    //   for (DocumentSnapshot ds in snapshot.documents) {
+    //     ds.reference.delete();
+    //   }
+    // });
+    // await eventCollection
+    //     .document(nm)
+    //     .collection('images')
+    //     .getDocuments()
+    //     .then((snapshot) {
+    //   for (DocumentSnapshot ds in snapshot.documents) {
+    //     ds.reference.delete();
+    //   }
+    // });
+    // await eventCollection
+    //     .document(nm)
+    //     .collection('imagepath')
+    //     .getDocuments()
+    //     .then((snapshot) {
+    //   for (DocumentSnapshot ds in snapshot.documents) {
+    //     FirebaseStorage.instance.ref().child(ds.data['path']).delete();
+    //     ds.reference.delete();
+    //   }
+    // });
 
     //await pathh(nm);
     // await FirebaseStorage.instance.ref().child('$nm/').delete();
