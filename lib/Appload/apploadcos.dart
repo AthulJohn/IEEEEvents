@@ -35,7 +35,7 @@ class _CosLoadState extends State<CosLoad> {
           children: <Widget>[
             Container(
                 height: 300,
-                child: Image.asset('assets/gg.gif', fit: BoxFit.contain)),
+                child: Image.asset('assets/IEEE.gif', fit: BoxFit.contain)),
             toreturn,
           ],
         ));

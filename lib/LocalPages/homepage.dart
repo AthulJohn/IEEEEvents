@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return StreamProvider<List<Event>>.value(
         value: CloudService().events,
         child: Scaffold(
+          resizeToAvoidBottomInset: false,
           body: SizedBox.expand(
             child: Column(
               children: <Widget>[

@@ -6,7 +6,9 @@ import 'package:design/functions.dart';
 import 'package:design/values.dart';
 import 'package:provider/provider.dart';
 import 'package:design/FIREBASE/database.dart';
+import 'package:intl/intl.dart';
 import 'update.dart';
+import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
 class Events extends StatefulWidget {
   // final Event event;
@@ -197,11 +199,11 @@ class _ActListState extends State<ActList> {
                                                     try {
                                                       setState(() {
                                                         load = true;
+                                                        delete = true;
                                                       });
                                                       await CloudService()
                                                           .delet(widget
                                                               .event.name);
-                                                      delete = true;
                                                     } catch (e) {
                                                       print(e);
                                                     }
@@ -307,37 +309,83 @@ class _ActListState extends State<ActList> {
                     ),
                     // : Container()),
                     key: Key(''),
-                    child: Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30)),
-                      margin: EdgeInsets.fromLTRB(0, 8, 0, 8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ExpansionTile(
-                            title: Padding(
-                              padding: const EdgeInsets.fromLTRB(25.0, 0, 8, 0),
-                              child: Center(
-                                  child: Text(
-                                '${activities[ind - 2].name}',
-                                //  activities[ind].name,
-                                style: TextStyle(fontSize: 30, color: color[0]),
-                              )),
+                    child: Center(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.grey,
+                            borderRadius: BorderRadius.circular(30)),
+                        width: w(305, context),
+                        child: ConfigurableExpansionTile(
+                          header: Container(
+                            width: w(300, context),
+                            child: Card(
+                              elevation: 5,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30)),
+                              // child: Padding(
+                              //     padding: const EdgeInsets.all(8.0),
+                              child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 10),
+                                  child: Center(
+                                    child: Text(
+                                      '${activities[ind - 2].name}',
+                                      //  activities[ind].name,
+                                      style: TextStyle(
+                                          fontSize: 30, color: color[0]),
+                                      // )
+                                    ),
+                                  )),
                             ),
-                            children: <Widget>[
-                              Text(
-                                activities[ind - 2].desc +
-                                    "\nEvent Date: " +
-                                    "${activities[ind - 2].updatedate}",
-                                style: TextStyle(
-                                    fontSize: 18, color: Colors.grey[600]),
+                          ),
+                          headerExpanded: Container(
+                              width: w(305, context),
+                              child: Card(
+                                shape: RoundedRectangleBorder(
+                                    side: BorderSide(color: Colors.grey),
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(30))),
+                                // child: Padding(
+                                //     padding: const EdgeInsets.all(8.0),
+                                child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10),
+                                    child: Center(
+                                      child: Text(
+                                        '${activities[ind - 2].name}',
+                                        //  activities[ind].name,
+                                        style: TextStyle(
+                                            fontSize: 30, color: color[0]),
+                                        // )
+                                      ),
+                                    )),
+                              )),
+                          children: <Widget>[
+                            Container(
+                              width: w(300, context),
+                              color: Colors.grey,
+                              child: Text(
+                                activities[ind - 2].desc,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 18),
                               ),
-                              Text(
+                            ),
+                            Container(
+                              padding: EdgeInsets.only(bottom: 8),
+                              width: w(300, context),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.vertical(
+                                      bottom: Radius.circular(30))),
+                              child: Text(
                                 '\nCreated: ' +
-                                    '${activities[ind - 2].createdate}',
-                                style: TextStyle(color: Colors.grey[500]),
-                              )
-                            ]),
+                                    DateFormat('dd-MM-yyyy')
+                                        .format(activities[ind - 2].createdate),
+                                textAlign: TextAlign.center,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),

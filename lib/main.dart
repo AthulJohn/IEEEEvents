@@ -1,3 +1,4 @@
+import 'package:design/Appload/apploadcos.dart';
 import 'package:design/LocalPages/addactivity.dart';
 import 'package:design/LocalPages/addevent.dart';
 import 'package:design/Appload/apploadcs.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Mace Events',
+      title: 'IEEE Events',
       theme: ThemeData(
         fontFamily: 'Lato',
         primaryColor: Color(0xFF04294F),
@@ -42,15 +43,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  Widget tobereturned = homeWidget;
-  int dur = dura;
+  Widget tobereturned = CosLoad();
   bool first = true;
   bool connection;
   Future assign() async {
     connection = await testcon();
     if (connection) {
       first = false;
-      await Future.delayed(Duration(milliseconds: dur));
+      await Future.delayed(Duration(milliseconds: 4220));
       setState(() {
         tobereturned = MyHomePage();
       });
