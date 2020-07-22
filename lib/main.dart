@@ -1,11 +1,9 @@
 import 'package:design/Appload/apploadcos.dart';
 import 'package:design/LocalPages/addactivity.dart';
 import 'package:design/LocalPages/addevent.dart';
-import 'package:design/Appload/apploadcs.dart';
 import 'package:design/LocalPages/events.dart';
 import 'package:design/LocalPages/homepage.dart';
 import 'package:flutter/services.dart';
-import 'package:design/values.dart';
 import 'LocalPages/about.dart';
 import 'package:design/functions.dart';
 import 'package:flutter/material.dart';
