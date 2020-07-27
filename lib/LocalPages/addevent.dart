@@ -16,7 +16,7 @@ class AddEvent extends StatefulWidget {
 
 class _AddEventState extends State<AddEvent> {
   bool load = false;
-  Event addval = Event(0, '', '', DateTime.now(), DateTime.now(), '', []);
+  Event addval = Event(0, '', '', DateTime.now(), DateTime.now(), '', [], 0);
   File _image;
   final picker = ImagePicker();
 

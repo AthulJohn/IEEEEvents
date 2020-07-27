@@ -64,6 +64,7 @@ class _UpdateState extends State<Update> {
     return load
         ? Loading()
         : Scaffold(
+            resizeToAvoidBottomPadding: false,
             body: Container(
               margin: EdgeInsets.symmetric(vertical: 10),
               child: Column(
@@ -86,184 +87,192 @@ class _UpdateState extends State<Update> {
                   Expanded(
                       flex: 672,
                       child: ListView.builder(
-                        itemCount: getl(activities) + 1,
+                        itemCount: getl(activities) + 2,
                         itemBuilder: (BuildContext context, int index) {
                           return Container(
                               margin: EdgeInsets.fromLTRB(30, 15, 30, 33),
-                              child: index == 0
-                                  ? Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                          Container(
-                                            height: 23,
-                                            child: Row(
-                                              children: <Widget>[
-                                                Text(
-                                                  'Event Active',
-                                                  style:
-                                                      TextStyle(fontSize: 16),
+                              child: index == getl(activities) + 1
+                                  ? Container(height: h(180, context))
+                                  : index == 0
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                              Container(
+                                                height: 23,
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Text(
+                                                      'Event Active',
+                                                      style: TextStyle(
+                                                          fontSize: 16),
+                                                    ),
+                                                    Switch(
+                                                      value: switchvalue,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          switchvalue = value;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ],
                                                 ),
-                                                Switch(
-                                                  value: switchvalue,
+                                              ),
+                                              Container(
+                                                height: 15,
+                                                child: SizedBox(),
+                                              ),
+                                              Container(
+                                                height: 44,
+                                                child: Text('${addval.name}',
+                                                    style: TextStyle(
+                                                        fontSize: 32)),
+                                              ),
+                                              Container(
+                                                height: 15,
+                                                child: SizedBox(),
+                                              ),
+                                              Container(
+                                                height: 22,
+                                                child: Text(
+                                                  'Event Description',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                height: 10,
+                                                child: SizedBox(),
+                                              ),
+                                              Container(
+                                                height: 110,
+                                                child: TextField(
                                                   onChanged: (value) {
                                                     setState(() {
-                                                      switchvalue = value;
+                                                      addval.desc = value;
                                                     });
                                                   },
+                                                  controller: desccontrol[0],
+                                                  decoration: InputDecoration(
+                                                      filled: true,
+                                                      border: InputBorder.none,
+                                                      fillColor:
+                                                          Color(0xFFEFEFEF)),
+                                                  maxLines: 4,
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 15,
-                                            child: SizedBox(),
-                                          ),
-                                          Container(
-                                            height: 44,
-                                            child: Text('${addval.name}',
-                                                style: TextStyle(fontSize: 32)),
-                                          ),
-                                          Container(
-                                            height: 15,
-                                            child: SizedBox(),
-                                          ),
-                                          Container(
-                                            height: 22,
-                                            child: Text(
-                                              'Event Description',
-                                              style: TextStyle(
-                                                fontSize: 16,
                                               ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 10,
-                                            child: SizedBox(),
-                                          ),
-                                          Container(
-                                            height: 110,
-                                            child: TextField(
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  addval.desc = value;
-                                                });
-                                              },
-                                              controller: desccontrol[0],
-                                              decoration: InputDecoration(
-                                                  filled: true,
-                                                  border: InputBorder.none,
-                                                  fillColor: Color(0xFFEFEFEF)),
-                                              maxLines: 4,
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 10,
-                                            child: SizedBox(),
-                                          ),
-                                          Container(
-                                            height: 22,
-                                            child: Text(
-                                              'Images',
-                                              style: TextStyle(
-                                                fontSize: 16,
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            height: 10,
-                                            child: SizedBox(),
-                                          ),
-                                          Container(
-                                            height: 100,
-                                            child: Stack(children: <Widget>[
-                                              getl(images) + getl(added) == 0
-                                                  ? Center(
-                                                      child: Text(
-                                                          'Add Images here,\nTap on the camera to add an image.\nDelete an Image by tapping the image.\nThe forst Image you add will be considered as title Image',
-                                                          textAlign:
-                                                              TextAlign.center,
-                                                          style: TextStyle(
-                                                              color: Colors
-                                                                  .grey[400])))
-                                                  : Container(),
                                               Container(
-                                                  decoration: BoxDecoration(
-                                                      border:
-                                                          Border.all(width: 2),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10)),
-                                                  child: GridView(
-                                                    padding: EdgeInsets.all(8),
-                                                    gridDelegate:
-                                                        SliverGridDelegateWithFixedCrossAxisCount(
-                                                            crossAxisCount: 4),
-                                                    children: [
-                                                      for (int i = 0;
-                                                          i < getl(images);
-                                                          i++)
-                                                        Container(
-                                                          // margin:
-                                                          //     EdgeInsets.all(8),
-                                                          // height: 30,
-                                                          child: Stack(
-                                                            children: <Widget>[
-                                                              Container(
-                                                                child: Center(
-                                                                  child: Image.network(
-                                                                      images[i],
+                                                height: 10,
+                                                child: SizedBox(),
+                                              ),
+                                              Container(
+                                                height: 22,
+                                                child: Text(
+                                                  'Images',
+                                                  style: TextStyle(
+                                                    fontSize: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                height: 10,
+                                                child: SizedBox(),
+                                              ),
+                                              Container(
+                                                height: 100,
+                                                child: Stack(children: <Widget>[
+                                                  getl(images) + getl(added) ==
+                                                          0
+                                                      ? Center(
+                                                          child: Text(
+                                                              'Add Images here,\nTap on the camera to add an image.\nDelete an Image by tapping the image.\nThe forst Image you add will be considered as title Image',
+                                                              textAlign:
+                                                                  TextAlign
+                                                                      .center,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      400])))
+                                                      : Container(),
+                                                  Container(
+                                                      decoration: BoxDecoration(
+                                                          border: Border.all(
+                                                              width: 2),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(
+                                                                      10)),
+                                                      child: GridView(
+                                                        padding:
+                                                            EdgeInsets.all(8),
+                                                        gridDelegate:
+                                                            SliverGridDelegateWithFixedCrossAxisCount(
+                                                                crossAxisCount:
+                                                                    4),
+                                                        children: [
+                                                          for (int i = 0;
+                                                              i < getl(images);
+                                                              i++)
+                                                            Container(
+                                                              // margin:
+                                                              //     EdgeInsets.all(8),
+                                                              // height: 30,
+                                                              child: Stack(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Container(
+                                                                    child:
+                                                                        Center(
+                                                                      child: Image.network(
+                                                                          images[
+                                                                              i],
+                                                                          fit: BoxFit
+                                                                              .cover),
+                                                                    ),
+                                                                  ),
+                                                                  Container(
+                                                                    // width: 30,
+                                                                    child:
+                                                                        Center(
+                                                                      child: IconButton(
+                                                                          color: Colors.white,
+                                                                          icon: Icon(
+                                                                            Icons.delete_outline,
+                                                                            color:
+                                                                                Colors.white70,
+                                                                            size:
+                                                                                30,
+                                                                          ),
+                                                                          onPressed: () {
+                                                                            setState(() {
+                                                                              removed.add(i);
+                                                                              images.removeAt(i);
+                                                                            });
+                                                                          }),
+                                                                    ),
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          for (int i = 0;
+                                                              i < getl(added);
+                                                              i++)
+                                                            Container(
+                                                              margin: EdgeInsets
+                                                                  .all(8),
+                                                              // height: 30,
+                                                              child: Stack(
+                                                                children: <
+                                                                    Widget>[
+                                                                  Image.file(
+                                                                      added[i],
                                                                       fit: BoxFit
                                                                           .cover),
-                                                                ),
-                                                              ),
-                                                              Container(
-                                                                // width: 30,
-                                                                child: Center(
-                                                                  child: IconButton(
-                                                                      color: Colors.white,
-                                                                      icon: Icon(
-                                                                        Icons
-                                                                            .delete_outline,
-                                                                        color: Colors
-                                                                            .white70,
-                                                                        size:
-                                                                            30,
-                                                                      ),
-                                                                      onPressed: () {
-                                                                        setState(
-                                                                            () {
-                                                                          removed
-                                                                              .add(i);
-                                                                          images
-                                                                              .removeAt(i);
-                                                                        });
-                                                                      }),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      for (int i = 0;
-                                                          i < getl(added);
-                                                          i++)
-                                                        Container(
-                                                          margin:
-                                                              EdgeInsets.all(8),
-                                                          // height: 30,
-                                                          child: Stack(
-                                                            children: <Widget>[
-                                                              Image.file(
-                                                                  added[i],
-                                                                  fit: BoxFit
-                                                                      .cover),
-                                                              Container(
-                                                                child:
-                                                                    IconButton(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        icon:
-                                                                            Icon(
+                                                                  Container(
+                                                                    child: IconButton(
+                                                                        color: Colors.white,
+                                                                        icon: Icon(
                                                                           Icons
                                                                               .delete_outline,
                                                                           color:
@@ -271,110 +280,112 @@ class _UpdateState extends State<Update> {
                                                                           size:
                                                                               40,
                                                                         ),
-                                                                        onPressed:
-                                                                            () {
+                                                                        onPressed: () {
                                                                           setState(
                                                                               () {
                                                                             added.removeAt(i);
                                                                           });
                                                                         }),
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      FlatButton(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20)),
-                                                          onPressed: getImage,
-                                                          child: Icon(
-                                                              Icons.add_a_photo,
-                                                              size: 50))
-                                                    ],
-                                                  )),
-                                            ]),
-                                          )
-                                          // Container(
-                                          //   height: 42,
-                                          //   child: Row(
-                                          //     children: <Widget>[
-                                          //       Text('Event Background'),
-                                          //       FlatButton(
-                                          //         child: Text('Change'),
-                                          //         onPressed: () {},
-                                          //       )
-                                          //     ],
-                                          //   ),
-                                          // ),
-                                          // Container(
-                                          //     margin: EdgeInsets.all(10),
-                                          //     height: 42,
-                                          //     child: FlatButton(
-                                          //       child: Text('Change'),
-                                          //       onPressed: () {},
-                                          //     )),
-                                        ])
-                                  : Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text(
-                                          '${getl(activities) + 1 - index}',
-                                          style: TextStyle(fontSize: 18),
-                                        ),
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                        Text(
-                                          'Activity Title',
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        SizedBox(
-                                          height: 13,
-                                        ),
-                                        TextField(
-                                          controller: namecontrol[index - 1],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              activities[index - 1].name =
-                                                  value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                              filled: true,
-                                              border: InputBorder.none,
-                                              fillColor: Color(0xFFEFEFEF)),
-                                        ),
-                                        SizedBox(
-                                          height: 15,
-                                        ),
-                                        Text(
-                                          'Activity Description',
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: 13,
-                                        ),
-                                        TextField(
-                                          controller: desccontrol[index],
-                                          onChanged: (value) {
-                                            setState(() {
-                                              activities[index - 1].desc =
-                                                  value;
-                                            });
-                                          },
-                                          decoration: InputDecoration(
-                                              filled: true,
-                                              border: InputBorder.none,
-                                              fillColor: Color(0xFFEFEFEF)),
-                                          maxLines: 4,
-                                        ),
-                                      ],
-                                    ));
+                                                                  )
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          FlatButton(
+                                                              shape: RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              20)),
+                                                              onPressed:
+                                                                  getImage,
+                                                              child: Icon(
+                                                                  Icons
+                                                                      .add_a_photo,
+                                                                  size: 50))
+                                                        ],
+                                                      )),
+                                                ]),
+                                              )
+                                              // Container(
+                                              //   height: 42,
+                                              //   child: Row(
+                                              //     children: <Widget>[
+                                              //       Text('Event Background'),
+                                              //       FlatButton(
+                                              //         child: Text('Change'),
+                                              //         onPressed: () {},
+                                              //       )
+                                              //     ],
+                                              //   ),
+                                              // ),
+                                              // Container(
+                                              //     margin: EdgeInsets.all(10),
+                                              //     height: 42,
+                                              //     child: FlatButton(
+                                              //       child: Text('Change'),
+                                              //       onPressed: () {},
+                                              //     )),
+                                            ])
+                                      : Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              '${getl(activities) + 1 - index}',
+                                              style: TextStyle(fontSize: 18),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              'Activity Title',
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            SizedBox(
+                                              height: 13,
+                                            ),
+                                            TextField(
+                                              controller:
+                                                  namecontrol[index - 1],
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  activities[index - 1].name =
+                                                      value;
+                                                });
+                                              },
+                                              decoration: InputDecoration(
+                                                  filled: true,
+                                                  border: InputBorder.none,
+                                                  fillColor: Color(0xFFEFEFEF)),
+                                            ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              'Activity Description',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 13,
+                                            ),
+                                            TextField(
+                                              controller: desccontrol[index],
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  activities[index - 1].desc =
+                                                      value;
+                                                });
+                                              },
+                                              decoration: InputDecoration(
+                                                  filled: true,
+                                                  border: InputBorder.none,
+                                                  fillColor: Color(0xFFEFEFEF)),
+                                              maxLines: 4,
+                                            ),
+                                          ],
+                                        ));
                         },
                       )),
                   Expanded(

@@ -120,7 +120,7 @@ class _GalleryState extends State<Gallery> {
                                 icon: Icon(Icons.keyboard_arrow_right),
                                 size: 30,
                                 onpressed: () {
-                                  cont.previousPage(
+                                  cont.nextPage(
                                       duration: Duration(milliseconds: 250),
                                       curve: Curves.fastLinearToSlowEaseIn);
                                 },

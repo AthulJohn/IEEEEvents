@@ -521,7 +521,7 @@ class _ItemsState extends State<Items> {
       else if (widget.select == 2)
         setState(() {
           events = events.where((event) {
-            return event.active == 1 && event.done == 1;
+            return event.active == 1 && event.done > 0;
           }).toList();
         });
     }
@@ -567,7 +567,7 @@ class _ItemsState extends State<Items> {
                             borderRadius:
                                 BorderRadius.circular(w(13, context))),
                         color: events[index].active == 1
-                            ? events[index].done == 1
+                            ? events[index].done > 0
                                 ? Color(0xFF6DD3F0)
                                 : Color(0xFFFFCC51)
                             : Color(0xFFF0F0F0),

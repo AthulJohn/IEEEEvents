@@ -250,7 +250,8 @@ class _ActListState extends State<ActList> {
                                   Navigator.pushNamed(context, 'addact',
                                       arguments: [
                                         widget.event.name,
-                                        getl(activities)
+                                        getl(activities),
+                                        widget.event.lind
                                       ]);
                                 },
                               ),
@@ -266,6 +267,7 @@ class _ActListState extends State<ActList> {
                   padding:
                       const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: Dismissible(
+                    key: Key('${activities[ind - 2].index}'),
                     direction: DismissDirection.startToEnd,
                     confirmDismiss: (startToEnd) async {
                       bool val;
@@ -300,8 +302,8 @@ class _ActListState extends State<ActList> {
                       return val;
                     },
                     onDismissed: (startToEnd) {
-                      CloudService()
-                          .acdele(widget.event.name, activities[ind - 2].name);
+                      CloudService().acdele(widget.event.name,
+                          activities[ind - 2].index, widget.event.done);
                     },
                     background: Container(
                       color: Colors.white,
@@ -314,7 +316,6 @@ class _ActListState extends State<ActList> {
                           ]),
                     ),
                     // : Container()),
-                    key: Key(''),
                     child: Center(
                       child: Container(
                         decoration: BoxDecoration(

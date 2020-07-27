@@ -4,6 +4,7 @@ import 'dart:io';
 
 class Event {
   int index;
+  int lind;
   String name;
   DateTime createdate;
   DateTime updatedate;
@@ -13,7 +14,7 @@ class Event {
   int active, done;
   List<File> images;
   Event(this.index, this.name, this.desc, this.createdate, this.updatedate,
-      this.theme, this.images,
+      this.theme, this.images, this.lind,
       {this.active = 0, this.done = 0});
 }
 

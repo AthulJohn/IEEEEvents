@@ -13,7 +13,7 @@ class AddActivity extends StatefulWidget {
 
 class _AddActivityState extends State<AddActivity> {
   bool datecheck = false, firsttry = true, load = false;
-  Event addval = Event(0, '', '', DateTime.now(), DateTime.now(), '', []);
+  Event addval = Event(0, '', '', DateTime.now(), DateTime.now(), '', [], 0);
   @override
   Widget build(BuildContext context) {
     return load
@@ -211,14 +211,12 @@ class _AddActivityState extends State<AddActivity> {
                           });
                           try {
                             await CloudService(index: name[0]).updateDate(
-                              name[0],
-                              DateTime.now(),
-                            );
+                                name[0], DateTime.now(), name[2] + 1);
                             await CloudService(index: (name[0])).updateactivity(
                                 addval.name,
                                 addval.desc,
                                 addval.createdate ?? DateTime.now(),
-                                addval.index,
+                                name[2],
                                 addval.updatedate ?? DateTime.now());
                           } catch (e) {
                             print(e);
