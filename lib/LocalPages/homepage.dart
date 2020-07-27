@@ -600,9 +600,8 @@ class _ItemsState extends State<Items> {
                                             ))))
                               ])
                             : Container(
-                                padding: EdgeInsets.all(
-                                  w(15, context),
-                                ),
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: w(15, context), vertical: 8),
                                 child: Align(
                                   heightFactor: 1.5,
                                   alignment: Alignment.centerLeft,

@@ -1,6 +1,7 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:design/LocalPages/gallery.dart';
 import 'package:design/Widgets/RoundButton.dart';
+import 'loadingpage.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:design/functions.dart';
@@ -109,9 +110,10 @@ class _ActListState extends State<ActList> {
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext conxt, int ind) {
-          // activities.sort(
-          //   (a, b) => a.updatedate.compareTo(b.updatedate),
-          // );
+          if (activities != null)
+            activities.sort(
+              (a, b) => a.updatedate.compareTo(b.updatedate),
+            );
           if (ind == 1)
             return AnimatedSwitcher(
                 transitionBuilder: (child, animation) =>
@@ -209,16 +211,14 @@ class _ActListState extends State<ActList> {
                                                   child: Text('No')),
                                               FlatButton(
                                                   onPressed: () async {
+                                                    setState(() {
+                                                      load = true;
+                                                      delete = true;
+                                                    });
                                                     try {
-                                                      setState(() {
-                                                        load = true;
-                                                        delete = true;
-                                                      });
-                                                      await CloudService().delet(
-                                                          widget.event.name,
-                                                          getl(widget.event
-                                                                  .images) !=
-                                                              0);
+                                                      await CloudService()
+                                                          .delet(widget
+                                                              .event.name);
                                                     } catch (e) {
                                                       print(e);
                                                     }
@@ -274,52 +274,41 @@ class _ActListState extends State<ActList> {
                         context: context,
                         barrierDismissible: true,
                         builder: (BuildContext context) {
-                          return ModalProgressHUD(
-                            inAsyncCall: loading,
-                            child: AlertDialog(
-                              title: Text('Confirm Delete'),
-                              actions: <Widget>[
-                                FlatButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        val = false;
-                                      });
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('No')),
-                                FlatButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        val = true;
-                                      });
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('Yes'))
-                              ],
-                            ),
+                          return AlertDialog(
+                            title: Text('Confirm Delete'),
+                            actions: <Widget>[
+                              FlatButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      val = false;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('No')),
+                              FlatButton(
+                                  onPressed: () async {
+                                    setState(() {
+                                      val = true;
+                                    });
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('Yes'))
+                            ],
                           );
                         },
                       );
                       return val;
                     },
                     onDismissed: (startToEnd) {
-                      // setState(() {
-                      //   loading = true;
-                      // });
                       CloudService()
                           .acdele(widget.event.name, activities[ind - 2].name);
-                      // setState(() {
-                      //   loading = false;
-                      // });
                     },
                     background: Container(
                       color: Colors.white,
-                      child: // true//////////////////////TODO
-                          //?
-                          Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             Icon(Icons.delete_outline,
                                 size: 50, color: Colors.redAccent)
                           ]),
@@ -381,10 +370,27 @@ class _ActListState extends State<ActList> {
                             Container(
                               width: w(300, context),
                               color: Colors.grey,
-                              child: Text(
-                                activities[ind - 2].desc,
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 18),
+                              child: Column(
+                                children: <Widget>[
+                                  Text(
+                                    activities[ind - 2].desc,
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Icon(Icons.calendar_today),
+                                      Text(
+                                        'Date:' +
+                                            DateFormat('dd-MM-yyyy').format(
+                                                activities[ind - 2].updatedate),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 18),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
                             Container(

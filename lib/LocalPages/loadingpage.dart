@@ -6,7 +6,11 @@ import '../functions.dart';
 
 class Loading extends StatelessWidget {
   final List<String> toshow = [
-    'did You Know that in the 1980s, an IBM computer wasn’t considered 100% compatible unless it could run Microsoft Flight Simulator',
+    'did you know that IEEE publishes approximately 200 transactions, journals, and magazines.',
+    'did you know that IEEE has over 1,200 active standards and more than 650 standards under development.',
+    'There are more than 419,000 IEEE members in over 160 countries',
+    'did you know that IEEE publishes nearly a third of the world’s technical literature in electrical engineering, computer science, and electronics',
+    'did you know that in the 1980s, an IBM computer wasn’t considered 100% compatible unless it could run Microsoft Flight Simulator',
     'did you know that the first computer mouse was invented by Doug Engelbart in around 1964 and was made of wood.',
     'did you know that Google actually have a "Wedding Planner" site.',
     'did you know that every minute, 300 hours of video are uploaded on YouTube.',

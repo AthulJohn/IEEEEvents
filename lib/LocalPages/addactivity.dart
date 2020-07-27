@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:design/values.dart';
 import 'package:design/functions.dart';
 import '../FIREBASE/database.dart';
@@ -52,7 +53,7 @@ class _AddActivityState extends State<AddActivity> {
                       child: SizedBox(),
                     ),
                     Expanded(
-                        flex: 36,
+                        flex: 46,
                         child: TextField(
                           onChanged: (value) {
                             setState(() {
@@ -145,8 +146,8 @@ class _AddActivityState extends State<AddActivity> {
                                         initialDate: DateTime.now(),
                                         firstDate: DateTime(2018),
                                         lastDate: DateTime(2100));
-                                    if (addval.updatedate == null)
-                                      addval.updatedate = DateTime.now();
+                                    // if (addval.updatedate == null)
+                                    //   addval.updatedate = DateTime.now();
                                     setState(() {
                                       datecheck = false;
                                       firsttry = false;
@@ -156,7 +157,8 @@ class _AddActivityState extends State<AddActivity> {
                                 Text(
                                   firsttry
                                       ? ''
-                                      : '${addval.updatedate.day}-${addval.updatedate.month}-${addval.updatedate.year}',
+                                      : DateFormat('dd-MM-yyyy')
+                                          .format(addval.updatedate),
                                   style: TextStyle(
                                     fontSize: 16,
                                   ),
@@ -215,9 +217,9 @@ class _AddActivityState extends State<AddActivity> {
                             await CloudService(index: (name[0])).updateactivity(
                                 addval.name,
                                 addval.desc,
-                                addval.createdate,
+                                addval.createdate ?? DateTime.now(),
                                 addval.index,
-                                addval.updatedate);
+                                addval.updatedate ?? DateTime.now());
                           } catch (e) {
                             print(e);
                           }
@@ -227,10 +229,10 @@ class _AddActivityState extends State<AddActivity> {
                           Navigator.pop(context);
                         },
                       ),
-                      flex: 32,
+                      flex: 47,
                     ),
                     Expanded(
-                      flex: 164,
+                      flex: 139,
                       child: SizedBox(),
                     ),
                     Expanded(

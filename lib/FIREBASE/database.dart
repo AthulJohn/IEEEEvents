@@ -77,6 +77,8 @@ class CloudService {
 
   Future editData(
       Event event, List activities, List added, List removed) async {
+    int len = 0;
+    List imgs = [];
     var stat = await eventCollection
         .document(event.name)
         .collection('imagepath')
@@ -87,29 +89,31 @@ class CloudService {
           .document(event.name)
           .collection('imagepath')
           .getDocuments();
-      int len = 0;
-      for (int i = 0; i < paths.documents.length; i++) {
-        if (removed.contains(i)) {
-          len++;
-          await FirebaseStorage.instance
-              .ref()
-              .child('${paths.documents[i].data['path']}')
-              .delete();
-          await eventCollection
-              .document(event.name)
-              .collection('imagepath')
-              .document('$i')
-              .delete();
-          await eventCollection
-              .document(event.name)
-              .collection('images')
-              .document('$i')
-              .delete();
+      if (getl(removed) != 0)
+        for (int i = 0; i < paths.documents.length; i++) {
+          if (removed.contains(i)) {
+            len++;
+            await FirebaseStorage.instance
+                .ref()
+                .child('${paths.documents[i].data['path']}')
+                .delete();
+            await eventCollection
+                .document(event.name)
+                .collection('imagepath')
+                .document('$i')
+                .delete();
+            await eventCollection
+                .document(event.name)
+                .collection('images')
+                .document('$i')
+                .delete();
+          }
         }
-      }
       len = paths.documents.length - len;
-      if (getl(added) != 0) {
-        List<String> imgs = await uploadFile(event.name, added);
+    }
+    if (len == 0 || (len != 0 && getl(added) != 0)) {
+      imgs = await uploadFile(event.name, added);
+      if (len != 0 || getl(added) != 0) {
         for (int i = 0; i < imgs.length; i++) {
           await eventCollection
               .document(event.name)
@@ -124,13 +128,12 @@ class CloudService {
                   {'path': '${event.name}/${Path.basename(added[i].path)}'});
         }
       }
+    } else {
+      imgs.add(event.theme);
     }
-    final dcs = await eventCollection
-        .document(event.name)
-        .collection('images')
-        .getDocuments();
+    //}
     await eventCollection.document(event.name).updateData({
-      'theme': dcs.documents[0].data['url'],
+      'theme': imgs[0],
       'desc': event.desc,
       'update': DateTime.now(),
       'active': event.active,
@@ -198,7 +201,7 @@ class CloudService {
     }).toList();
   }
 
-  Future delet(String nm, bool check) async {
+  Future delet(String nm) async {
     // await Firestore.instance.runTransaction((Transaction myTransaction) async{
     //   await myTransaction.delete(snapshot.data.documents[nm].reference);
     //});
@@ -211,7 +214,12 @@ class CloudService {
         ds.reference.delete();
       }
     });
-    if (check) {
+    var stat = await eventCollection
+        .document(nm)
+        .collection('imagepath')
+        .document('0')
+        .get();
+    if (stat.exists) {
       await eventCollection
           .document(nm)
           .collection('images')
@@ -233,7 +241,6 @@ class CloudService {
       });
 
       // await pathh(nm);
-      await FirebaseStorage.instance.ref().child('$nm/').delete();
     }
     await eventCollection.document(nm).delete();
   }
