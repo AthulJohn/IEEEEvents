@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:design/LocalPages/gallery.dart';
 import 'package:design/Widgets/RoundButton.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -8,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:design/FIREBASE/database.dart';
 import 'package:intl/intl.dart';
 import 'update.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
 
 class Events extends StatefulWidget {
@@ -26,53 +28,62 @@ class _EventsState extends State<Events> {
     return StreamProvider<List<Event>>.value(
         value: CloudService().acts(event.name),
         child: Scaffold(
-            body: Stack(
-          children: <Widget>[
-            CustomScrollView(
-              controller: scrollController,
-              slivers: <Widget>[
-                SliverAppBar(
-                  leading: Container(),
-                  shape: ContinuousRectangleBorder(
-                      borderRadius: BorderRadius.only(
-                          bottomRight: Radius.circular(74),
-                          bottomLeft: Radius.circular(74))),
-                  expandedHeight: 200,
-                  floating: true,
-                  pinned: true,
-                  flexibleSpace: FlexibleSpaceBar(
-                    collapseMode: CollapseMode.parallax,
-                    title: Text(
-                      // event.name,
-                      '',
-                      style: TextStyle(
-                        color: Colors.white,
+          body: Stack(
+            children: <Widget>[
+              CustomScrollView(
+                controller: scrollController,
+                slivers: <Widget>[
+                  SliverAppBar(
+                    leading: Container(),
+                    shape: ContinuousRectangleBorder(
+                        borderRadius: BorderRadius.only(
+                            bottomRight: Radius.circular(74),
+                            bottomLeft: Radius.circular(74))),
+                    expandedHeight: 200,
+                    floating: true,
+                    pinned: true,
+                    flexibleSpace: FlexibleSpaceBar(
+                      collapseMode: CollapseMode.parallax,
+                      title: Text(
+                        // event.name,
+                        '',
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      background: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context)
+                              .push(_createRoute(event.name, event.theme));
+                        },
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(30)),
+                          child: Hero(
+                            tag: '0',
+                            child: CachedNetworkImage(
+                                imageUrl: event.theme, fit: BoxFit.cover),
+                          ),
+                        ),
                       ),
                     ),
-                    background: ClipRRect(
-                      borderRadius:
-                          BorderRadius.vertical(bottom: Radius.circular(30)),
-                      child: Image(
-                          image: NetworkImage('${event.theme}'),
-                          fit: BoxFit.cover),
-                    ),
                   ),
-                ),
-                ActList(event),
-              ],
-            ),
-            Positioned(
-              child: SafeArea(
-                  child: RoundButton(
-                      color: color[0],
-                      icon: Icon(Icons.arrow_back, color: Colors.white),
-                      onpressed: () {
-                        Navigator.pop(context);
-                      },
-                      size: h(40, context))),
-            )
-          ],
-        )));
+                  ActList(event),
+                ],
+              ),
+              Positioned(
+                child: SafeArea(
+                    child: RoundButton(
+                        color: color[0],
+                        icon: Icon(Icons.arrow_back, color: Colors.white),
+                        onpressed: () {
+                          Navigator.pop(context);
+                        },
+                        size: h(40, context))),
+              )
+            ],
+          ),
+        ));
   }
 }
 
@@ -113,6 +124,7 @@ class _ActListState extends State<ActList> {
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
                               widget.event.desc,
+                              textAlign: TextAlign.center,
                               style: TextStyle(fontSize: 18),
                             ),
                           )
@@ -131,7 +143,8 @@ class _ActListState extends State<ActList> {
                           Expanded(
                             flex: 6,
                             child: Text('${widget.event.name}',
-                                style: TextStyle(fontSize: 28)),
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold)),
                           ),
                           Expanded(
                               child: descac
@@ -158,7 +171,7 @@ class _ActListState extends State<ActList> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               RoundButton(
-                                size: w(50, context),
+                                size: w(40, context),
                                 color: color[0],
                                 icon: Icon(
                                   Icons.edit,
@@ -173,7 +186,7 @@ class _ActListState extends State<ActList> {
                                 },
                               ),
                               RoundButton(
-                                size: w(50, context),
+                                size: w(40, context),
                                 color: color[0],
                                 icon: Icon(
                                   Icons.delete_outline,
@@ -201,9 +214,11 @@ class _ActListState extends State<ActList> {
                                                         load = true;
                                                         delete = true;
                                                       });
-                                                      await CloudService()
-                                                          .delet(widget
-                                                              .event.name);
+                                                      await CloudService().delet(
+                                                          widget.event.name,
+                                                          getl(widget.event
+                                                                  .images) !=
+                                                              0);
                                                     } catch (e) {
                                                       print(e);
                                                     }
@@ -224,6 +239,7 @@ class _ActListState extends State<ActList> {
                                 },
                               ),
                               RoundButton(
+                                size: w(40, context),
                                 color: color[0],
                                 icon: Icon(
                                   Icons.add,
@@ -247,7 +263,8 @@ class _ActListState extends State<ActList> {
             );
           return getl(activities) != 0
               ? Padding(
-                  padding: const EdgeInsets.only(left: 10, right: 10),
+                  padding:
+                      const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: Dismissible(
                     direction: DismissDirection.startToEnd,
                     confirmDismiss: (startToEnd) async {
@@ -417,7 +434,7 @@ class _ActListState extends State<ActList> {
                               color[0].withOpacity(0.3),
                               Colors.transparent
                             ],
-                            textStyle: TextStyle(fontSize: 40, color: color[0]),
+                            textStyle: TextStyle(fontSize: 35, color: color[0]),
                             text: [
                               "Something Big is Cooking",
                               "but it's not yet ready!",
@@ -440,4 +457,22 @@ class _ActListState extends State<ActList> {
       ),
     );
   }
+}
+
+Route _createRoute(String name, String theme) {
+  return PageRouteBuilder(
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        Gallery(name, theme),
+    transitionDuration: Duration(milliseconds: 750),
+    transitionsBuilder: (context, animation, secondaryAnimation, child) {
+      var begin = Offset(0.0, -1.0);
+      var end = Offset.zero;
+      var curve = Curves.ease;
+      var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+      return SlideTransition(
+        position: animation.drive(tween),
+        child: child,
+      );
+    },
+  );
 }

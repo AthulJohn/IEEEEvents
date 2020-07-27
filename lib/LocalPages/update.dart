@@ -4,6 +4,9 @@ import '../functions.dart';
 import '../FIREBASE/database.dart';
 import 'loadingpage.dart';
 
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
+
 class Update extends StatefulWidget {
   final Event event;
   final List<Event> activities;
@@ -17,6 +20,30 @@ class _UpdateState extends State<Update> {
   List<Event> activities;
   List<TextEditingController> desccontrol = [], namecontrol = [];
   Event addval;
+  List<String> temp, images;
+  List<int> removed = [];
+  List<File> added = [];
+  void getimages() async {
+    temp = await CloudService().getimage(widget.event.name);
+    if (this.mounted)
+      setState(() {
+        images = temp;
+      });
+  }
+
+  File _image;
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null)
+      setState(() {
+        _image = File(pickedFile.path);
+        added.add(_image);
+      });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -29,6 +56,7 @@ class _UpdateState extends State<Update> {
       namecontrol.add(TextEditingController(text: activities[i].name));
     }
     addval = widget.event;
+    getimages();
   }
 
   @override
@@ -97,6 +125,10 @@ class _UpdateState extends State<Update> {
                                                 style: TextStyle(fontSize: 32)),
                                           ),
                                           Container(
+                                            height: 15,
+                                            child: SizedBox(),
+                                          ),
+                                          Container(
                                             height: 22,
                                             child: Text(
                                               'Event Description',
@@ -106,11 +138,11 @@ class _UpdateState extends State<Update> {
                                             ),
                                           ),
                                           Container(
-                                            height: 15,
+                                            height: 10,
                                             child: SizedBox(),
                                           ),
                                           Container(
-                                            height: 144,
+                                            height: 110,
                                             child: TextField(
                                               onChanged: (value) {
                                                 setState(() {
@@ -126,28 +158,163 @@ class _UpdateState extends State<Update> {
                                             ),
                                           ),
                                           Container(
-                                            height: 20,
+                                            height: 10,
                                             child: SizedBox(),
                                           ),
                                           Container(
-                                            height: 42,
-                                            child: Row(
-                                              children: <Widget>[
-                                                Text('Event Background'),
-                                                FlatButton(
-                                                  child: Text('Change'),
-                                                  onPressed: () {},
-                                                )
-                                              ],
+                                            height: 22,
+                                            child: Text(
+                                              'Images',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              ),
                                             ),
                                           ),
                                           Container(
-                                              margin: EdgeInsets.all(10),
-                                              height: 42,
-                                              child: FlatButton(
-                                                child: Text('Change'),
-                                                onPressed: () {},
-                                              )),
+                                            height: 10,
+                                            child: SizedBox(),
+                                          ),
+                                          Container(
+                                            height: 100,
+                                            child: Stack(children: <Widget>[
+                                              getl(images) + getl(added) == 0
+                                                  ? Center(
+                                                      child: Text(
+                                                          'Add Images here,\nTap on the camera to add an image.\nDelete an Image by tapping the image.\nThe forst Image you add will be considered as title Image',
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: TextStyle(
+                                                              color: Colors
+                                                                  .grey[400])))
+                                                  : Container(),
+                                              Container(
+                                                  decoration: BoxDecoration(
+                                                      border:
+                                                          Border.all(width: 2),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10)),
+                                                  child: GridView(
+                                                    padding: EdgeInsets.all(8),
+                                                    gridDelegate:
+                                                        SliverGridDelegateWithFixedCrossAxisCount(
+                                                            crossAxisCount: 4),
+                                                    children: [
+                                                      for (int i = 0;
+                                                          i < getl(images);
+                                                          i++)
+                                                        Container(
+                                                          // margin:
+                                                          //     EdgeInsets.all(8),
+                                                          // height: 30,
+                                                          child: Stack(
+                                                            children: <Widget>[
+                                                              Container(
+                                                                child: Center(
+                                                                  child: Image.network(
+                                                                      images[i],
+                                                                      fit: BoxFit
+                                                                          .cover),
+                                                                ),
+                                                              ),
+                                                              Container(
+                                                                // width: 30,
+                                                                child: Center(
+                                                                  child: IconButton(
+                                                                      color: Colors.white,
+                                                                      icon: Icon(
+                                                                        Icons
+                                                                            .delete_outline,
+                                                                        color: Colors
+                                                                            .white70,
+                                                                        size:
+                                                                            30,
+                                                                      ),
+                                                                      onPressed: () {
+                                                                        setState(
+                                                                            () {
+                                                                          removed
+                                                                              .add(i);
+                                                                          images
+                                                                              .removeAt(i);
+                                                                        });
+                                                                      }),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      for (int i = 0;
+                                                          i < getl(added);
+                                                          i++)
+                                                        Container(
+                                                          margin:
+                                                              EdgeInsets.all(8),
+                                                          // height: 30,
+                                                          child: Stack(
+                                                            children: <Widget>[
+                                                              Image.file(
+                                                                  added[i],
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                              Container(
+                                                                child:
+                                                                    IconButton(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        icon:
+                                                                            Icon(
+                                                                          Icons
+                                                                              .delete_outline,
+                                                                          color:
+                                                                              Colors.white70,
+                                                                          size:
+                                                                              40,
+                                                                        ),
+                                                                        onPressed:
+                                                                            () {
+                                                                          setState(
+                                                                              () {
+                                                                            added.removeAt(i);
+                                                                          });
+                                                                        }),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      FlatButton(
+                                                          shape: RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          20)),
+                                                          onPressed: getImage,
+                                                          child: Icon(
+                                                              Icons.add_a_photo,
+                                                              size: 50))
+                                                    ],
+                                                  )),
+                                            ]),
+                                          )
+                                          // Container(
+                                          //   height: 42,
+                                          //   child: Row(
+                                          //     children: <Widget>[
+                                          //       Text('Event Background'),
+                                          //       FlatButton(
+                                          //         child: Text('Change'),
+                                          //         onPressed: () {},
+                                          //       )
+                                          //     ],
+                                          //   ),
+                                          // ),
+                                          // Container(
+                                          //     margin: EdgeInsets.all(10),
+                                          //     height: 42,
+                                          //     child: FlatButton(
+                                          //       child: Text('Change'),
+                                          //       onPressed: () {},
+                                          //     )),
                                         ])
                                   : Column(
                                       crossAxisAlignment:
@@ -213,8 +380,12 @@ class _UpdateState extends State<Update> {
                   Expanded(
                     flex: 60,
                     child: Container(
-                        margin: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                        margin: EdgeInsets.fromLTRB(30, 5, 0, 5),
                         child: FlatButton(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
                           child: Text(
                             'Submit',
                             style: TextStyle(color: Colors.white),
@@ -225,7 +396,8 @@ class _UpdateState extends State<Update> {
                               addval.active = switchvalue ? 1 : 0;
                             });
                             try {
-                              await CloudService().editData(addval, activities);
+                              await CloudService()
+                                  .editData(addval, activities, added, removed);
                             } catch (e) {
                               print(e);
                             }

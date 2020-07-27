@@ -1,8 +1,8 @@
-import 'package:design/Appload/apploadcos.dart';
 import 'package:design/LocalPages/addactivity.dart';
 import 'package:design/LocalPages/addevent.dart';
 import 'package:design/LocalPages/events.dart';
 import 'package:design/LocalPages/homepage.dart';
+import 'package:design/LocalPages/start.dart';
 import 'package:flutter/services.dart';
 import 'LocalPages/about.dart';
 import 'package:design/functions.dart';
@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         'event': (context) => Events(),
         'addact': (context) => AddActivity(),
         'about': (context) => About(),
+        //'gallery':(context) => Gallery(),
       },
     );
   }
@@ -41,14 +42,14 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  Widget tobereturned = CosLoad();
+  Widget tobereturned = Start();
   bool first = true;
   bool connection;
   Future assign() async {
     connection = await testcon();
     if (connection) {
       first = false;
-      await Future.delayed(Duration(milliseconds: 4220));
+      await Future.delayed(Duration(milliseconds: 4000));
       setState(() {
         tobereturned = MyHomePage();
       });

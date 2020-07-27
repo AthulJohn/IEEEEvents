@@ -1,14 +1,18 @@
-import 'package:design/Widgets/RoundButton.dart';
+import 'package:flutter/material.dart';
+// packages
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+//flutter inbuilt
+import 'package:flutter/rendering.dart';
+import 'package:provider/provider.dart';
+//custom made
 import '../functions.dart';
 import '../values.dart';
 import 'login.dart';
 import '../FIREBASE/database.dart';
-import 'package:flutter/rendering.dart';
-import 'package:provider/provider.dart';
+import '../Widgets/RoundButton.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -70,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     builder: (BuildContext context) {
                                       return IconButton(
                                         icon: Icon(
-                                          Icons.format_align_left,
+                                          Icons.menu,
                                           color: Colors.white,
                                           size: w(30, context),
                                         ),
@@ -88,14 +92,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                   flex: 192,
                                 ),
                                 Expanded(
-                                  child: IconButton(
-                                    icon: Icon(
-                                      Icons.notifications,
-                                      color: Colors.white,
-                                      size: w(25, context),
-                                    ),
-                                    onPressed: () {},
-                                  ),
+                                  child: SizedBox(),
+                                  // child: IconButton(
+                                  //   icon: Icon(
+                                  //     Icons.notifications,
+                                  //     color: Colors.white,
+                                  //     size: w(25, context),
+                                  //   ),
+                                  //   onPressed: () {},
+                                  // ),
                                   flex: 21,
                                 ),
                                 Expanded(
@@ -166,22 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                           size: w(50, context),
                                         )
                                       : Container(),
-                                  // child: FlatButton(
-                                  //   color: Colors.white,
-                                  //   child: Icon(
-                                  //     Icons.add,
-                                  //     size: h(20, context),
-                                  //     color: color[0],
-                                  //   ),
-                                  //   onPressed: () {
-                                  //     Navigator.pushNamed(context, 'add',
-                                  //         arguments: getl(events));
-                                  //   },
-                                  //   shape: CircleBorder(
-                                  //       side: BorderSide(
-                                  //           color: Colors.white)),
-                                  // ),
-                                ), //),
+                                ),
                                 Expanded(flex: 50, child: SizedBox())
                               ],
                             )),
@@ -202,13 +192,13 @@ class _MyHomePageState extends State<MyHomePage> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
                                 FlatButton(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
                                   child: Text(
                                     'All Events',
                                     style: TextStyle(
+                                        fontSize: all ? 17 : 15,
                                         color: all ? color[0] : Colors.grey,
-                                        fontStyle: all
-                                            ? FontStyle.italic
-                                            : FontStyle.normal,
                                         fontWeight: all
                                             ? FontWeight.bold
                                             : FontWeight.normal),
@@ -224,14 +214,14 @@ class _MyHomePageState extends State<MyHomePage> {
                                       .withOpacity(all ? 1 : 0.5),
                                 ),
                                 FlatButton(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
                                   child: Text(
                                     'Upcoming',
                                     style: TextStyle(
+                                        fontSize: upcoming ? 17 : 15,
                                         color:
                                             upcoming ? color[0] : Colors.grey,
-                                        fontStyle: upcoming
-                                            ? FontStyle.italic
-                                            : FontStyle.normal,
                                         fontWeight: upcoming
                                             ? FontWeight.bold
                                             : FontWeight.normal),
@@ -247,13 +237,13 @@ class _MyHomePageState extends State<MyHomePage> {
                                       .withOpacity(upcoming ? 1 : 0.5),
                                 ),
                                 FlatButton(
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
                                   child: Text(
                                     'Ongoing',
                                     style: TextStyle(
+                                        fontSize: ongoing ? 17 : 15,
                                         color: ongoing ? color[0] : Colors.grey,
-                                        fontStyle: ongoing
-                                            ? FontStyle.italic
-                                            : FontStyle.normal,
                                         fontWeight: ongoing
                                             ? FontWeight.bold
                                             : FontWeight.normal),
@@ -316,19 +306,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                     });
                                   },
                                 ),
-                                // IconButton(
-                                //   icon: grid
-                                //       ? Icon(Icons.list)
-                                //       : Icon(Icons.grid_on),
-                                //   onPressed: () {
-                                //     setState(() {
-                                //       if (grid)
-                                //         grid = false;
-                                //       else
-                                //         grid = true;
-                                //     });
-                                //   },
-                                // ),
                               ],
                             )),
                         Expanded(
@@ -575,16 +552,14 @@ class _ItemsState extends State<Items> {
                 itemBuilder: (BuildContext context, int index) {
                   return InkWell(
                     onTap: () {
-                      print(events[index].name);
                       Navigator.pushNamed(context, 'event',
                           arguments: events[index]);
                     },
                     child: Container(
                       key: Key('${widget.gridval}'),
                       constraints: BoxConstraints(
-                          maxHeight: widget.gridval
-                              ? h(150, context)
-                              : h(58, context)),
+                        maxHeight: widget.gridval ? 150 : 58,
+                      ),
                       margin: EdgeInsets.only(bottom: h(15, context)),
                       height: widget.gridval ? h(150, context) : h(58, context),
                       child: Card(
@@ -602,11 +577,16 @@ class _ItemsState extends State<Items> {
                                   flex: 2,
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(16),
+                                        borderRadius: BorderRadius.circular(
+                                            w(13, context)),
                                         image: DecorationImage(
                                             fit: BoxFit.cover,
-                                            image: NetworkImage(
-                                                '${events[index].theme}')),
+                                            image: CachedNetworkImageProvider(
+                                              '${events[index].theme}',
+                                            )
+                                            //  NetworkImage(
+                                            //     '${events[index].theme}')
+                                            ),
                                         color: color[0]),
                                   ),
                                 ),
@@ -615,12 +595,13 @@ class _ItemsState extends State<Items> {
                                         padding: EdgeInsets.all(10),
                                         child: Text('${events[index].name}',
                                             style: TextStyle(
-                                              fontSize: h(24, context),
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20,
                                             ))))
                               ])
                             : Container(
                                 padding: EdgeInsets.all(
-                                  w(10, context),
+                                  w(15, context),
                                 ),
                                 child: Align(
                                   heightFactor: 1.5,
@@ -628,7 +609,8 @@ class _ItemsState extends State<Items> {
                                   child: Text(
                                     '${events[index].name}',
                                     style: TextStyle(
-                                      fontSize: h(24, context),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 20,
                                     ),
                                   ),
                                 ),

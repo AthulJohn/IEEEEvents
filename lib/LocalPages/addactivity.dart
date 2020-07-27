@@ -190,6 +190,8 @@ class _AddActivityState extends State<AddActivity> {
                     ),
                     Expanded(
                       child: FlatButton(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 7),
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10)),
                         child: Text('Submit',
