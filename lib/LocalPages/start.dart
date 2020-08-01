@@ -1,47 +1,108 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:design/functions.dart';
 
-import 'package:design/values.dart';
+// import 'package:design/values.dart';
 
-class Start extends StatelessWidget {
+class Start extends StatefulWidget {
+  @override
+  _StartState createState() => _StartState();
+}
+
+class _StartState extends State<Start> {
+  bool conn = true;
+  void checkConnection() async {
+    conn = await testcon();
+    setState(() {
+      conn = conn;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkConnection();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          // Center(
-          //   child: Image.asset(
-          //     'assets/onyx(3).png',
-          //     fit: BoxFit.contain,
-          //   ),
-          // ),
-          Container(),
-          Container(
-            child: TextLiquidFill(
-              textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 90),
-              text: "IEEE",
-              boxBackgroundColor: Colors.white,
-              loadDuration: Duration(milliseconds: 4000),
-              waveColor: color[0],
+          Expanded(
+            flex: 18,
+            child: SizedBox(),
+          ),
+          Expanded(
+            flex: 17,
+            child: Text(
+              'IEEE\nEvents',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.w900,
+                fontSize: h(80, context),
+              ),
             ),
           ),
-          CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(color[0]),
+          Expanded(
+            flex: 14,
+            child: SizedBox(),
           ),
-          // child: ColorizeAnimatedTextKit(
-          //   // pause: Duration(seconds: 0),
-          //   speed: Duration(milliseconds: 500),
-          //   textAlign: TextAlign.center,
-          //   colors: [
-          //     Colors.white,
-          //     color[0].withOpacity(0.6),
-          //     Colors.transparent,
-          //   ],
-          //   textStyle: TextStyle(fontSize: 100, color: color[0]),
-          //   text: ["IEEE", "events"],
-          // ),
+          Expanded(
+            flex: conn ? 3 : 10,
+            child: AnimatedCrossFade(
+              duration: Duration(milliseconds: 500),
+              crossFadeState:
+                  conn ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+              secondChild: Container(
+                margin: EdgeInsets.symmetric(horizontal: w(30, context)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Icon(
+                      Icons.error,
+                      color: Colors.red,
+                    ),
+                    Text(
+                      'Oops, Looks like you are not having good internet connection. Please try after sometime.',
+                      textAlign: TextAlign.center,
+                    )
+                  ],
+                ),
+              ),
+              firstChild: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    'Joy of ',
+                    style: TextStyle(
+                      fontSize: h(25, context),
+                    ),
+                  ),
+                  Container(
+                    width: w(150, context),
+                    child: RotateAnimatedTextKit(
+                        textStyle: TextStyle(
+                          fontSize: h(25, context),
+                        ),
+                        duration: Duration(
+                          milliseconds: 400,
+                        ),
+                        text: [
+                          'Involvement',
+                          'Exploration',
+                          'Engagement',
+                          'Execution',
+                          'Volunteering'
+                        ]),
+                  )
+                ],
+              ),
+            ),
+          ),
+          Expanded(child: SizedBox(), flex: conn ? 12 : 5)
         ],
       ),
     );

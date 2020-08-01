@@ -1,9 +1,10 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:design/LocalPages/gallery.dart';
 import 'package:design/Widgets/RoundButton.dart';
-import 'loadingpage.dart';
+// import 'loadingpage.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:design/functions.dart';
 import 'package:design/values.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +98,7 @@ class ActList extends StatefulWidget {
 
 class _ActListState extends State<ActList> {
   List<Event> activities;
-  bool descac = false;
+  bool descac = false, open = false;
   bool delete = false, load = false, loading = false, loged = false;
   Future check() async {
     loged = await logincheck();
@@ -115,62 +116,73 @@ class _ActListState extends State<ActList> {
               (a, b) => a.updatedate.compareTo(b.updatedate),
             );
           if (ind == 1)
-            return AnimatedSwitcher(
-                transitionBuilder: (child, animation) =>
-                    ScaleTransition(child: child, scale: animation),
-                duration: Duration(milliseconds: 300),
-                child: Container(
-                    key: Key('$descac'),
-                    child: descac
-                        ? Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              widget.event.desc,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: 18),
-                            ),
-                          )
-                        : Container()));
+            return AnimatedCrossFade(
+              firstCurve: Curves.easeIn,
+              secondCurve: Curves.easeOut,
+              crossFadeState:
+                  descac ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+              duration: Duration(milliseconds: 200),
+              firstChild: Padding(
+                padding: EdgeInsets.symmetric(
+                    vertical: 8.0, horizontal: w(28, context)),
+                child: Text(
+                  widget.event.desc,
+                  style: TextStyle(fontSize: 18),
+                ),
+              ),
+              secondChild: Container(),
+            );
           else if (ind == 0)
             return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Expanded(
-                    flex: 4,
-                    child: InkWell(
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            flex: 6,
-                            child: Text('${widget.event.name}',
-                                style: TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold)),
-                          ),
-                          Expanded(
-                              child: descac
-                                  ? Icon(Icons.keyboard_arrow_up)
-                                  : Icon(Icons.keyboard_arrow_down))
-                        ],
+              padding: EdgeInsets.symmetric(
+                vertical: 10.0,
+                horizontal: w(28, context),
+              ),
+              child: Container(
+                height: h(50, context),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    Expanded(
+                      // flex: 6,
+                      child: InkWell(
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              flex: 6,
+                              child: Text('${widget.event.name}',
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                            if (!loged)
+                              Expanded(
+                                  child: descac
+                                      ? Icon(Icons.keyboard_arrow_up)
+                                      : Icon(Icons.keyboard_arrow_down))
+                          ],
+                        ),
+                        onTap: () {
+                          setState(() {
+                            descac = !descac;
+                          });
+                        },
                       ),
-                      onTap: () {
-                        if (descac)
-                          setState(() {
-                            descac = false;
-                          });
-                        else
-                          setState(() {
-                            descac = true;
-                          });
-                      },
                     ),
-                  ),
-                  Expanded(
-                    flex: loged ? 4 : 0,
-                    child: loged
-                        ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    if (loged)
+                      // Expanded(
+                      //   flex: open ? 8 : 1,
+                      //   child:
+                      AnimatedCrossFade(
+                        duration: Duration(milliseconds: 300),
+                        crossFadeState: open
+                            ? CrossFadeState.showFirst
+                            : CrossFadeState.showSecond,
+                        // color: color[0],
+                        firstChild: Container(
+                          child: Row(
+                            // mainAxisAlignment:
+                            //     MainAxisAlignment.spaceEvenly,
                             children: <Widget>[
                               RoundButton(
                                 size: w(40, context),
@@ -256,10 +268,32 @@ class _ActListState extends State<ActList> {
                                 },
                               ),
                             ],
-                          )
-                        : Container(),
-                  ),
-                ],
+                          ),
+                        ),
+                        secondChild: Container(),
+                      ),
+                    if (loged)
+                      AnimatedIconButton(
+                        duration: Duration(milliseconds: 300),
+                        size: 22,
+                        startBackgroundColor: color[0],
+                        endBackgroundColor: Colors.white,
+                        endIcon: Icon(
+                          Icons.close,
+                          color: color[0],
+                        ),
+                        startIcon: Icon(
+                          Icons.keyboard_arrow_left,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            open = !open;
+                          });
+                        },
+                      ),
+                  ],
+                ),
               ),
             );
           return getl(activities) != 0
@@ -268,37 +302,39 @@ class _ActListState extends State<ActList> {
                       const EdgeInsets.only(left: 10, right: 10, bottom: 15),
                   child: Dismissible(
                     key: Key('${activities[ind - 2].index}'),
-                    direction: DismissDirection.startToEnd,
+                    direction: loged
+                        ? DismissDirection.startToEnd
+                        : DismissDirection.endToStart,
                     confirmDismiss: (startToEnd) async {
                       bool val;
-                      // if (widget.loged)
-                      await showDialog(
-                        context: context,
-                        barrierDismissible: true,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Confirm Delete'),
-                            actions: <Widget>[
-                              FlatButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      val = false;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('No')),
-                              FlatButton(
-                                  onPressed: () async {
-                                    setState(() {
-                                      val = true;
-                                    });
-                                    Navigator.of(context).pop();
-                                  },
-                                  child: Text('Yes'))
-                            ],
-                          );
-                        },
-                      );
+                      if (loged)
+                        await showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Confirm Delete'),
+                              actions: <Widget>[
+                                FlatButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        val = false;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('No')),
+                                FlatButton(
+                                    onPressed: () async {
+                                      setState(() {
+                                        val = true;
+                                      });
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('Yes'))
+                              ],
+                            );
+                          },
+                        );
                       return val;
                     },
                     onDismissed: (startToEnd) {
@@ -311,66 +347,61 @@ class _ActListState extends State<ActList> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(Icons.delete_outline,
-                                size: 50, color: Colors.redAccent)
+                            if (loged)
+                              Icon(Icons.delete_outline,
+                                  size: 50, color: Colors.redAccent)
                           ]),
                     ),
-                    // : Container()),
                     child: Center(
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.grey,
-                            borderRadius: BorderRadius.circular(30)),
-                        width: w(305, context),
+                            // color: Colors.grey,
+                            borderRadius: BorderRadius.circular(13)),
+                        width: w(330, context),
                         child: ConfigurableExpansionTile(
                           header: Container(
-                            width: w(300, context),
+                            width: w(330, context),
                             child: Card(
-                              elevation: 5,
+                              elevation: 2,
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30)),
-                              // child: Padding(
-                              //     padding: const EdgeInsets.all(8.0),
+                                  borderRadius: BorderRadius.circular(13)),
                               child: Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 10),
-                                  child: Center(
-                                    child: Text(
-                                      '${activities[ind - 2].name}',
-                                      //  activities[ind].name,
-                                      style: TextStyle(
-                                          fontSize: 30, color: color[0]),
-                                      // )
-                                    ),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 15, horizontal: 10),
+                                  // child: Center(
+                                  child: Text(
+                                    '${activities[ind - 2].name}',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18,
+                                        color: Colors.black),
+                                    // ),
                                   )),
                             ),
                           ),
                           headerExpanded: Container(
-                              width: w(305, context),
+                              margin: EdgeInsets.only(top: 0),
+                              width: w(330, context),
                               child: Card(
                                 shape: RoundedRectangleBorder(
                                     side: BorderSide(color: Colors.grey),
                                     borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(30))),
-                                // child: Padding(
-                                //     padding: const EdgeInsets.all(8.0),
+                                        top: Radius.circular(13))),
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    child: Center(
-                                      child: Text(
-                                        '${activities[ind - 2].name}',
-                                        //  activities[ind].name,
-                                        style: TextStyle(
-                                            fontSize: 30, color: color[0]),
-                                        // )
-                                      ),
+                                        horizontal: 10, vertical: 15),
+                                    child: Text(
+                                      '${activities[ind - 2].name}',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 18,
+                                          color: Colors.black),
                                     )),
                               )),
                           children: <Widget>[
                             Container(
-                              width: w(300, context),
-                              color: Colors.grey,
+                              width: w(320, context),
+                              color: Color(0xFFC4C4C4),
                               child: Column(
                                 children: <Widget>[
                                   Text(
@@ -396,9 +427,9 @@ class _ActListState extends State<ActList> {
                             ),
                             Container(
                               padding: EdgeInsets.only(bottom: 8),
-                              width: w(300, context),
+                              width: w(320, context),
                               decoration: BoxDecoration(
-                                  color: Colors.grey,
+                                  color: Color(0xFFC4C4C4),
                                   borderRadius: BorderRadius.vertical(
                                       bottom: Radius.circular(30))),
                               child: Text(
@@ -414,51 +445,7 @@ class _ActListState extends State<ActList> {
                     ),
                   ),
                 )
-              : activities != null
-                  ? Center(
-                      child: Container(
-                          margin: EdgeInsets.symmetric(
-                            vertical: h(120, context),
-                            horizontal: 20,
-                          ),
-                          // child: Column(
-                          //   mainAxisAlignment: MainAxisAlignment.center,
-                          //   children: <Widget>[
-                          //     Container(
-                          //         height: h(200, context),
-                          //         child: Image.asset('assets/cooking.gif',
-                          //             fit: BoxFit.fitHeight,)),
-                          child: ColorizeAnimatedTextKit(
-                            pause: Duration(seconds: 0),
-                            isRepeatingAnimation: true,
-                            repeatForever: true,
-                            speed: Duration(milliseconds: 50),
-                            textAlign: TextAlign.center,
-                            colors: [
-                              Colors.transparent,
-                              color[0].withOpacity(0.6),
-                              Colors.transparent,
-                              color[0].withOpacity(0.3),
-                              Colors.transparent
-                            ],
-                            textStyle: TextStyle(fontSize: 35, color: color[0]),
-                            text: [
-                              "Something Big is Cooking",
-                              "but it's not yet ready!",
-                              "Stay Tuned..."
-                            ],
-                          )
-                          // Text(
-                          //   "Something Big is Cooking, but it's not yet ready! Stay Tuned...",
-                          //   textAlign: TextAlign.center,
-                          //   ),
-                          // ],
-                          )) //)
-                  : Center(
-                      child: Container(
-                        child: Text('Fetching Data.....'),
-                      ),
-                    );
+              : Nothing(activities != null);
         },
         childCount: getl(activities) == 0 ? 3 : getl(activities) + 2,
       ),
@@ -482,4 +469,44 @@ Route _createRoute(String name, String theme) {
       );
     },
   );
+}
+
+class Nothing extends StatelessWidget {
+  final bool actnull;
+  Nothing(this.actnull);
+  @override
+  Widget build(BuildContext context) {
+    return actnull
+        ? Center(
+            child: Container(
+                margin: EdgeInsets.symmetric(
+                  vertical: h(120, context),
+                  horizontal: 20,
+                ),
+                child: ColorizeAnimatedTextKit(
+                  pause: Duration(seconds: 0),
+                  isRepeatingAnimation: true,
+                  repeatForever: true,
+                  speed: Duration(milliseconds: 50),
+                  textAlign: TextAlign.center,
+                  colors: [
+                    Colors.transparent,
+                    color[0].withOpacity(0.6),
+                    Colors.transparent,
+                    color[0].withOpacity(0.3),
+                    Colors.transparent
+                  ],
+                  textStyle: TextStyle(fontSize: 35, color: color[0]),
+                  text: [
+                    "Something Big is Cooking",
+                    "but it's not yet ready!",
+                    "Stay Tuned..."
+                  ],
+                ))) //)
+        : Center(
+            child: Container(
+              child: Text('Fetching Data.....'),
+            ),
+          );
+  }
 }

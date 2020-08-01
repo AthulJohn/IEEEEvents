@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:io';
 import 'package:design/functions.dart';
 import 'dart:math';
-//import 'package:flutter/cupertino.dart';
-///import 'storage.dart';
 import 'package:path/path.dart' as Path;
-//import 'classes.dart';
+import 'package:path_provider/path_provider.dart' as path_provider;
 
 class CloudService {
   final String index;
@@ -22,7 +21,7 @@ class CloudService {
   }
 
   Future updateData(String name, String desc, DateTime cdate, DateTime udate,
-      int ind, List image) async {
+      int ind, List image, bool mace) async {
     List images = [];
     if (image != null) images = await uploadFile(name, image);
     await eventCollection.document(name).setData({
@@ -35,6 +34,7 @@ class CloudService {
       'active': 1,
       'done': 0,
       'lastind': 0,
+      'mace': mace
     });
     if (getl(image) != 0) {
       for (int i = 0; i < images.length; i++) {
@@ -52,29 +52,6 @@ class CloudService {
     }
     return;
   }
-
-  Future updatepics(String name, File img, int inde) async {
-    String url;
-    StorageReference storageReference =
-        FirebaseStorage.instance.ref().child('$inde');
-    StorageUploadTask uploadTask = storageReference.putFile(img);
-    await uploadTask.onComplete;
-    url = await storageReference.getDownloadURL();
-    await eventCollection
-        .document(name)
-        .collection('imagepath')
-        .document('$inde')
-        .setData({'path': '$name/$inde'});
-    await eventCollection
-        .document(name)
-        .collection('images')
-        .document('$inde')
-        .setData({'url': url});
-  }
-
-  // void removeimage(){
-
-  // }
 
   Future editData(
       Event event, List activities, List added, List removed) async {
@@ -148,6 +125,7 @@ class CloudService {
           .updateData({
         'name': i.name,
         'desc': i.desc,
+        'activitydate': i.updatedate,
       });
     }
     return;
@@ -181,7 +159,7 @@ class CloudService {
         doc.data['lastind'],
         active: doc.data['active'],
         done: doc.data['done'],
-        //recent: getRecent(doc.data['name'])
+        mace: doc.data['mace'],
       );
     }).toList();
   }
@@ -200,16 +178,7 @@ class CloudService {
     }).toList();
   }
 
-  List<String> _listfromimg(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return doc.data['url'].toString();
-    }).toList();
-  }
-
   Future delet(String nm) async {
-    // await Firestore.instance.runTransaction((Transaction myTransaction) async{
-    //   await myTransaction.delete(snapshot.data.documents[nm].reference);
-    //});
     await eventCollection
         .document(nm)
         .collection('activity')
@@ -244,23 +213,16 @@ class CloudService {
           ds.reference.delete();
         }
       });
-
-      // await pathh(nm);
     }
     await eventCollection.document(nm).delete();
   }
 
   Future acdele(String nm, int ac, int done) async {
-    // await Firestore.instance.runTransaction((Transaction myTransaction) async{
-    //   await myTransaction.delete(snapshot.data.documents[nm].reference);
-    //});
-
     await eventCollection
         .document(nm)
         .collection('activity')
         .document('$ac')
         .delete();
-    // await eventCollection.document(nm).updateData({'done':0});
   }
 
   Stream<List<Event>> get events {
@@ -294,14 +256,6 @@ class CloudService {
     return images;
   }
 
-  Stream<List<String>> img(String ind) {
-    return eventCollection
-        .document(ind)
-        .collection('images')
-        .snapshots()
-        .map(_listfromimg);
-  }
-
   List defaultim = [
     '338221',
     '748344',
@@ -323,6 +277,16 @@ class CloudService {
           .getDownloadURL());
     } else {
       for (File f in image) {
+        // final dir = await path_provider.getTemporaryDirectory();
+        // final targetPath = dir.absolute.path + "/temp.jpg";
+        // var result = await FlutterImageCompress.compressAndGetFile(
+        //   f.absolute.path,
+        //   targetPath,
+        //   quality: 88,
+        // );
+
+        // print(f.lengthSync());
+        // print(result.lengthSync());
         StorageReference storageReference = FirebaseStorage.instance
             .ref()
             .child('$name/${Path.basename(f.path)}');
@@ -334,16 +298,4 @@ class CloudService {
     }
     return images;
   }
-//  Future<List<String>> getImage(BuildContext context, Event event) async {
-//    int i;
-//    String ext='jpg';
-//    final ref = FirebaseStorage.instance
-//     .ref()
-//     .child(event.name).child('${i++}.$ext');
-//     for(var i in ref)
-//     ref.putFile(imageFile);
-// // or ref.putData(Uint8List.fromList(imageData));
-
-// var url = await ref.getDownloadURL() as String;
-// }
 }

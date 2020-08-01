@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+//import 'package:lite_rolling_switch/lite_rolling_switch.dart';// for future dark mode
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:animated_icon_button/animated_icon_button.dart';
+import 'package:line_awesome_flutter/line_awesome_flutter.dart'; // for future dark mode
 //flutter inbuilt
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -22,9 +25,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   bool loged = false,
       grid = false,
+      view = false,
+      filter = false,
+      sort = false,
       all = true,
       upcoming = false,
-      ongoing = false;
+      ongoing = false,
+      open = false,
+      maceonly = true;
   int dropvalue = 0;
   FirebaseUser user;
   Future checkuser() async {
@@ -33,8 +41,6 @@ class _MyHomePageState extends State<MyHomePage> {
       user = await FirebaseAuth.instance.currentUser();
     }
     setState(() {});
-    // setState(()  {
-    //   });
   }
 
   List<Event> events = [];
@@ -82,7 +88,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                           Scaffold.of(context).openDrawer();
                                         },
                                       );
-                                      //Scaffold.of(context).openDrawer();
                                     },
                                   ),
                                   flex: 40,
@@ -93,14 +98,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                                 Expanded(
                                   child: SizedBox(),
-                                  // child: IconButton(
-                                  //   icon: Icon(
-                                  //     Icons.notifications,
-                                  //     color: Colors.white,
-                                  //     size: w(25, context),
-                                  //   ),
-                                  //   onPressed: () {},
-                                  // ),
                                   flex: 21,
                                 ),
                                 Expanded(
@@ -142,18 +139,28 @@ class _MyHomePageState extends State<MyHomePage> {
                           child: SizedBox(),
                         ),
                         Expanded(
-                            flex: 9,
+                            flex: 11,
                             child: Row(
                               children: <Widget>[
                                 Expanded(child: SizedBox(), flex: 31),
                                 Expanded(
-                                    flex: 219,
+                                    flex: 239,
                                     child: Text(
+                                      // child: RichText(
+                                      //   text:TextSpan(children: [TextSpan(text: 'I',style:TextStyle(fontSize:h(22, context),fontWeight: FontWeight.w900,
+                                      //       color: Colors.white, )),TextSpan(text:'NVOLVE ',style:TextStyle(fontSize:h(20, context),fontWeight: FontWeight.w600,
+                                      //       color: Colors.white, )),TextSpan(text: 'E',style:TextStyle(fontSize:h(22, context),fontWeight: FontWeight.w900,
+                                      //       color: Colors.white, )),TextSpan(text:'XPLORE ',style:TextStyle(fontSize:h(20, context),fontWeight: FontWeight.w600,
+                                      //       color: Colors.white, )),TextSpan(text: 'E',style:TextStyle(fontSize:h(22, context),fontWeight: FontWeight.w900,
+                                      //       color: Colors.white, )),TextSpan(text:'NGAGE ',style:TextStyle(fontSize:h(20, context),fontWeight: FontWeight.w600,
+                                      //       color: Colors.white, )),TextSpan(text: '\nE',style:TextStyle(fontSize:h(22, context),fontWeight: FontWeight.w900,
+                                      //       color: Colors.white, )),TextSpan(text:'XECUTE ',style:TextStyle(fontSize:h(20, context),fontWeight: FontWeight.w600,
+                                      //       color: Colors.white, )),])
                                       "Involve Explore Engage\nExecute",
                                       style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           color: Colors.white,
-                                          fontSize: h(20, context)),
+                                          fontSize: h(22, context)),
                                     )),
                                 Expanded(child: SizedBox(), flex: 30),
                                 Expanded(
@@ -172,10 +179,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                         )
                                       : Container(),
                                 ),
-                                Expanded(flex: 50, child: SizedBox())
+                                Expanded(flex: 30, child: SizedBox())
                               ],
                             )),
-                        Expanded(child: SizedBox(), flex: 8)
+                        Expanded(child: SizedBox(), flex: 6)
                       ],
                     ),
                   ),
@@ -185,143 +192,428 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Container(
                     child: Column(
                       children: <Widget>[
-                        Expanded(child: SizedBox(), flex: 17),
-                        Expanded(
-                            flex: 38,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                FlatButton(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Text(
-                                    'All Events',
-                                    style: TextStyle(
-                                        fontSize: all ? 17 : 15,
-                                        color: all ? color[0] : Colors.grey,
-                                        fontWeight: all
-                                            ? FontWeight.bold
-                                            : FontWeight.normal),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      upcoming = false;
-                                      ongoing = false;
-                                      all = true;
-                                    });
-                                  },
-                                  color: Color(0xFFFFD8CC)
-                                      .withOpacity(all ? 1 : 0.5),
-                                ),
-                                FlatButton(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Text(
-                                    'Upcoming',
-                                    style: TextStyle(
-                                        fontSize: upcoming ? 17 : 15,
-                                        color:
-                                            upcoming ? color[0] : Colors.grey,
-                                        fontWeight: upcoming
-                                            ? FontWeight.bold
-                                            : FontWeight.normal),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      upcoming = true;
-                                      ongoing = false;
-                                      all = false;
-                                    });
-                                  },
-                                  color: Color(0xFFFFF0CC)
-                                      .withOpacity(upcoming ? 1 : 0.5),
-                                ),
-                                FlatButton(
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10)),
-                                  child: Text(
-                                    'Ongoing',
-                                    style: TextStyle(
-                                        fontSize: ongoing ? 17 : 15,
-                                        color: ongoing ? color[0] : Colors.grey,
-                                        fontWeight: ongoing
-                                            ? FontWeight.bold
-                                            : FontWeight.normal),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      upcoming = false;
-                                      ongoing = true;
-                                      all = false;
-                                    });
-                                  },
-                                  color: Color(0xFFCCEFF9)
-                                      .withOpacity(ongoing ? 1 : 0.5),
-                                ),
-                              ],
-                            )),
-                        Expanded(
-                          child: SizedBox(),
-                          flex: 27,
-                        ),
-                        Expanded(
-                            flex: 55,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                DropdownButton(
-                                    underline: Container(),
-                                    value: dropvalue,
-                                    items: [
-                                      DropdownMenuItem(
-                                        child: Text('Last Updated'),
-                                        value: 0,
-                                      ),
-                                      DropdownMenuItem(
-                                        child: Text("Name"),
-                                        value: 1,
-                                      ),
-                                      // DropdownMenuItem(
-                                      //   child: Text("Most Recent"),
-                                      //   value: 2,
-                                      // )
-                                    ],
-                                    onChanged: (value) {
+                        SizedBox(height: w(10, context)),
+                        //
+                        // Expanded(
+                        //   child: SizedBox(),
+                        //   flex: 15,
+                        // ),
+                        // Expanded(
+                        //     flex: 40,
+                        //     child: Row(
+                        //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        //       children: <Widget>[
+                        //         DropdownButton(
+                        //             iconEnabledColor: Colors.black,
+                        //             underline: Container(),
+                        //             value: dropvalue,
+                        //             items: [
+                        //               DropdownMenuItem(
+                        //                 child: Text('Last Updated'),
+                        //                 value: 0,
+                        //               ),
+                        //               DropdownMenuItem(
+                        //                 child: Text("Name"),
+                        //                 value: 1,
+                        //               ),
+                        //               // DropdownMenuItem(
+                        //               //   child: Text("Most Recent"),
+                        //               //   value: 2,
+                        //               // )
+                        //             ],
+                        //             onChanged: (value) {
+                        //               setState(() {
+                        //                 dropvalue = value;
+                        //               });
+                        //             }),
+                        //         FlatButton(
+                        //           color: maceonly ? Colors.blue : Colors.pink,
+                        //           child:
+                        //               maceonly ? Text('MaceOnly') : Text("all"),
+                        //           onPressed: () {
+                        //             setState(() {
+                        //               maceonly = !maceonly;
+                        //             });
+                        //           },
+                        //         ),
+                        //         RoundButton(
+                        //           elevation: 0,
+                        //           color: Colors.transparent,
+                        //           icon: grid
+                        //               ? Icon(Icons.list)
+                        //               : Icon(LineAwesomeIcons.table),
+                        //           size: w(50, context),
+                        //           onpressed: () {
+                        //             setState(() {
+                        //               if (grid)
+                        //                 grid = false;
+                        //               else
+                        //                 grid = true;
+                        //             });
+                        //           },
+                        //         ),
+                        //       ],
+                        //     )),
+                        Row(
+                          children: <Widget>[
+                            Spacer(),
+                            // AnimatedCrossFade(
+                            //   duration: Duration(milliseconds: 300),
+                            //   crossFadeState: open
+                            //       ? CrossFadeState.showFirst
+                            //       : CrossFadeState.showSecond,
+                            //   // color: color[0],
+                            //   firstChild:
+                            Container(
+                              child: Row(
+                                // mainAxisAlignment:
+                                //     MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  RoundButton(
+                                    elevation: 0,
+                                    size: w(40, context),
+                                    color: view ? color[0] : Colors.transparent,
+                                    icon: Icon(
+                                      Icons.remove_red_eye,
+                                      color: view ? Colors.white : color[0],
+                                    ),
+                                    onpressed: () {
                                       setState(() {
-                                        dropvalue = value;
+                                        view = !view;
+                                        filter = false;
+                                        sort = false;
                                       });
-                                    }),
-                                RoundButton(
-                                  color: Colors.white,
-                                  icon: grid
-                                      ? Icon(Icons.list)
-                                      : Icon(Icons.grid_on),
-                                  size: h(50, context),
-                                  onpressed: () {
-                                    setState(() {
-                                      if (grid)
-                                        grid = false;
-                                      else
-                                        grid = true;
-                                    });
-                                  },
-                                ),
-                              ],
-                            )),
-                        Expanded(
-                          child: SizedBox(),
-                          flex: 24,
-                        ),
-                        Expanded(
-                            flex: 436,
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: w(31, context),
-                                vertical: 0,
+                                    },
+                                  ),
+                                  RoundButton(
+                                    elevation: 0,
+                                    size: w(40, context),
+                                    color:
+                                        filter ? color[0] : Colors.transparent,
+                                    icon: Icon(
+                                      LineAwesomeIcons.filter,
+                                      color: filter ? Colors.white : color[0],
+                                    ),
+                                    onpressed: () {
+                                      setState(() {
+                                        filter = !filter;
+                                        view = false;
+                                        sort = false;
+                                      });
+                                    },
+                                  ),
+                                  RoundButton(
+                                    elevation: 0,
+                                    size: w(40, context),
+                                    color: sort ? color[0] : Colors.transparent,
+                                    icon: Icon(
+                                      Icons.sort_by_alpha,
+                                      //size: w(20, context),
+                                      color: sort ? Colors.white : color[0],
+                                    ),
+                                    onpressed: () {
+                                      setState(() {
+                                        sort = !sort;
+                                        filter = false;
+                                        view = false;
+                                      });
+                                    },
+                                  ),
+                                ],
                               ),
-                              child: Items(
-                                  dropvalue, grid, all ? 0 : upcoming ? 1 : 2),
-                            )),
+                            ),
+                            //   secondChild: Container(),
+                            // ),
+                            // AnimatedIconButton(
+                            //   duration: Duration(milliseconds: 300),
+                            //   size: 25,
+                            //   startBackgroundColor: color[0],
+                            //   endBackgroundColor: Colors.white,
+                            //   endIcon: Icon(
+                            //     Icons.close,
+                            //     color: color[0],
+                            //   ),
+                            //   startIcon: Icon(
+                            //     Icons.more_vert,
+                            //     color: Colors.white,
+                            //   ),
+                            //   onPressed: () {
+                            //     setState(() {
+                            //       view = false;
+                            //       filter = false;
+                            //       sort = false;
+                            //       open = !open;
+                            //     });
+                            //   },
+                            // ),
+                            SizedBox(
+                              width: w(30, context),
+                            )
+                          ],
+                        ),
+                        AnimatedCrossFade(
+                          duration: Duration(milliseconds: 300),
+                          crossFadeState: filter
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          firstChild: Column(
+                            children: <Widget>[
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Text(
+                                      'All Events',
+                                      style: TextStyle(
+                                          fontSize: all ? 17 : 15,
+                                          color: all ? color[0] : Colors.grey,
+                                          fontWeight: all
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        upcoming = false;
+                                        ongoing = false;
+                                        all = true;
+                                      });
+                                    },
+                                    color: Color(0xFFFFD8CC)
+                                        .withOpacity(all ? 1 : 0.5),
+                                  ),
+                                  FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Text(
+                                      'Upcoming',
+                                      style: TextStyle(
+                                          fontSize: upcoming ? 17 : 15,
+                                          color:
+                                              upcoming ? color[0] : Colors.grey,
+                                          fontWeight: upcoming
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        upcoming = true;
+                                        ongoing = false;
+                                        all = false;
+                                      });
+                                    },
+                                    color: Color(0xFFFFF0CC)
+                                        .withOpacity(upcoming ? 1 : 0.5),
+                                  ),
+                                  FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Text(
+                                      'Ongoing',
+                                      style: TextStyle(
+                                          fontSize: ongoing ? 17 : 15,
+                                          color:
+                                              ongoing ? color[0] : Colors.grey,
+                                          fontWeight: ongoing
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        upcoming = false;
+                                        ongoing = true;
+                                        all = false;
+                                      });
+                                    },
+                                    color: Color(0xFFCCEFF9)
+                                        .withOpacity(ongoing ? 1 : 0.5),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Text(
+                                      'All Organisers',
+                                      style: TextStyle(
+                                          fontSize: !maceonly ? 17 : 15,
+                                          color: !maceonly
+                                              ? color[0]
+                                              : Colors.grey,
+                                          fontWeight: !maceonly
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        maceonly = false;
+                                      });
+                                    },
+                                    color: Color(0xFFFFD8CC)
+                                        .withOpacity(!maceonly ? 1 : 0.5),
+                                  ),
+                                  FlatButton(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Text(
+                                      'Mace Only',
+                                      style: TextStyle(
+                                          fontSize: maceonly ? 17 : 15,
+                                          color:
+                                              maceonly ? color[0] : Colors.grey,
+                                          fontWeight: maceonly
+                                              ? FontWeight.bold
+                                              : FontWeight.normal),
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        maceonly = true;
+                                      });
+                                    },
+                                    color: Color(0xFFFFF0CC)
+                                        .withOpacity(maceonly ? 1 : 0.5),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          secondChild: Container(),
+                        ),
+                        AnimatedCrossFade(
+                          duration: Duration(milliseconds: 300),
+                          crossFadeState: view
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          firstChild: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text(
+                                  'List View',
+                                  style: TextStyle(
+                                      fontSize: !grid ? 17 : 15,
+                                      color: !grid ? color[0] : Colors.grey,
+                                      fontWeight: !grid
+                                          ? FontWeight.bold
+                                          : FontWeight.normal),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    grid = false;
+                                  });
+                                },
+                                color: Color(0xFFFFD8CC)
+                                    .withOpacity(!grid ? 1 : 0.5),
+                              ),
+                              FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text(
+                                  'Grid View',
+                                  style: TextStyle(
+                                      fontSize: grid ? 17 : 15,
+                                      color: grid ? color[0] : Colors.grey,
+                                      fontWeight: grid
+                                          ? FontWeight.bold
+                                          : FontWeight.normal),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    grid = true;
+                                  });
+                                },
+                                color: Color(0xFFFFF0CC)
+                                    .withOpacity(grid ? 1 : 0.5),
+                              ),
+                            ],
+                          ),
+                          secondChild: Container(),
+                        ),
+                        AnimatedCrossFade(
+                          duration: Duration(milliseconds: 300),
+                          crossFadeState: sort
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          // color: color[0],
+                          firstChild: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text(
+                                  'By Name',
+                                  style: TextStyle(
+                                      fontSize: dropvalue == 1 ? 17 : 15,
+                                      color: dropvalue == 1
+                                          ? color[0]
+                                          : Colors.grey,
+                                      fontWeight: dropvalue == 1
+                                          ? FontWeight.bold
+                                          : FontWeight.normal),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    dropvalue = 1;
+                                  });
+                                },
+                                color: Color(0xFFFFD8CC)
+                                    .withOpacity(dropvalue == 1 ? 1 : 0.5),
+                              ),
+                              FlatButton(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                                child: Text(
+                                  'By Last Updated',
+                                  style: TextStyle(
+                                      fontSize: dropvalue == 0 ? 17 : 15,
+                                      color: dropvalue == 0
+                                          ? color[0]
+                                          : Colors.grey,
+                                      fontWeight: dropvalue == 0
+                                          ? FontWeight.bold
+                                          : FontWeight.normal),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    dropvalue = 0;
+                                  });
+                                },
+                                color: Color(0xFFFFF0CC)
+                                    .withOpacity(dropvalue == 0 ? 1 : 0.5),
+                              ),
+                            ],
+                          ),
+                          secondChild: Container(),
+                        ),
+                        // Expanded(
+                        //   child: SizedBox(),
+                        //   flex: 10,
+                        // ),
+                        Expanded(
+                          //height: h(399, context),
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              vertical: h(10, context),
+                              horizontal: w(31, context),
+                            ),
+                            child: Items(dropvalue, grid,
+                                all ? 0 : upcoming ? 1 : 2, maceonly),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -367,16 +659,17 @@ class _DrawerObjectsState extends State<DrawerObjects> {
               flex: 53,
             ),
             Expanded(
-                child: FlatButton(
-                  onPressed: () {
+                child: RoundButton(
+                  size: h(50, context),
+                  onpressed: () {
                     Navigator.pop(context);
                   },
-                  child: Icon(
-                    Icons.arrow_back,
-                    size: h(38, context),
-                    color: Colors.white,
+                  icon: Icon(
+                    Icons.close,
+                    size: h(24, context),
+                    color: color[0],
                   ),
-                  color: color[0],
+                  color: Colors.white,
                 ),
                 flex: 38),
             Expanded(
@@ -430,6 +723,30 @@ class _DrawerObjectsState extends State<DrawerObjects> {
                 contentPadding: EdgeInsets.fromLTRB(9, 8, 0, 9),
               ),
             ),
+            // Expanded(
+            //   flex: 50,
+            //   child: SizedBox(),
+            // ),
+            // Expanded(
+            //     flex: 50,
+            //     // child: Row(
+            //     //   children: <Widget>[
+            //     //     Text('Dark Mode'),
+            //     child: LiteRollingSwitch(
+            //       value: darktheme,
+            //       textOn: 'Light',
+            //       textOff: 'Dark',
+            //       colorOn: Colors.lightBlue,
+            //       colorOff: Colors.black,
+            //       iconOff: LineAwesomeIcons.moon,
+            //       iconOn: LineAwesomeIcons.sun,
+            //       onChanged: (val) {
+            //         darktheme = val;
+            //       },
+            //     )
+            //     //   ],
+            //     // ),
+            //     ),
             Expanded(
               flex: 80,
               child: SizedBox(),
@@ -502,8 +819,8 @@ class _DrawerObjectsState extends State<DrawerObjects> {
 
 class Items extends StatefulWidget {
   final int sortval, select;
-  final bool gridval;
-  Items(this.sortval, this.gridval, this.select);
+  final bool gridval, maceonly;
+  Items(this.sortval, this.gridval, this.select, this.maceonly);
   @override
   _ItemsState createState() => _ItemsState();
 }
@@ -512,18 +829,40 @@ class _ItemsState extends State<Items> {
   List<Event> events = List();
   void assign() {
     if (events != null) {
-      if (widget.select == 1)
-        setState(() {
-          events = events
-              .where((event) => event.active == 1 && event.done == 0)
-              .toList();
-        });
-      else if (widget.select == 2)
-        setState(() {
-          events = events.where((event) {
-            return event.active == 1 && event.done > 0;
-          }).toList();
-        });
+      if (widget.maceonly) {
+        if (widget.select == 1)
+          setState(() {
+            events = events
+                .where((event) =>
+                    event.active == 1 && event.done == 0 && event.mace ?? false)
+                .toList();
+          });
+        else if (widget.select == 2)
+          setState(() {
+            events = events.where((event) {
+              return event.active == 1 && event.done > 0 && event.mace ?? false;
+            }).toList();
+          });
+        else
+          setState(() {
+            events = events.where((event) {
+              return event.mace ?? false;
+            }).toList();
+          });
+      } else {
+        if (widget.select == 1)
+          setState(() {
+            events = events
+                .where((event) => event.active == 1 && event.done == 0)
+                .toList();
+          });
+        else if (widget.select == 2)
+          setState(() {
+            events = events.where((event) {
+              return event.active == 1 && event.done > 0;
+            }).toList();
+          });
+      }
     }
   }
 
@@ -544,6 +883,7 @@ class _ItemsState extends State<Items> {
             },
             duration: Duration(seconds: 1),
             child: GridView.builder(
+                padding: EdgeInsets.only(top: 0.0),
                 key: Key('${widget.gridval}'),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: widget.gridval ? 2 : 1,

@@ -16,7 +16,8 @@ class AddEvent extends StatefulWidget {
 
 class _AddEventState extends State<AddEvent> {
   bool load = false;
-  Event addval = Event(0, '', '', DateTime.now(), DateTime.now(), '', [], 0);
+  Event addval =
+      Event(0, '', '', DateTime.now(), DateTime.now(), '', [], 0, mace: false);
   File _image;
   final picker = ImagePicker();
 
@@ -51,18 +52,6 @@ class _AddEventState extends State<AddEvent> {
                               Navigator.pop(context);
                             },
                             size: h(50, context)),
-                        // child: FlatButton(
-                        //   color: Color(0xFF04294F),
-                        //   onPressed: () {
-                        //     Navigator.pop(context);
-                        //   },
-                        //   shape: CircleBorder(side: BorderSide()),
-                        //   child: Icon(
-                        //     Icons.arrow_back,
-                        //     size: 20,
-                        //     color: Colors.white,
-                        //   ),
-                        // ),
                         flex: 38),
                     Expanded(child: SizedBox(), flex: 30),
                     Expanded(child: Text('Event Name'), flex: 19),
@@ -84,7 +73,6 @@ class _AddEventState extends State<AddEvent> {
                                 ),
                               ),
                               filled: true,
-                              //border: InputBorder.none,
                               fillColor: Color(0xFFEFEFEF)),
                         )),
                     Expanded(flex: 24, child: SizedBox()),
@@ -113,9 +101,21 @@ class _AddEventState extends State<AddEvent> {
                               filled: true,
                               fillColor: Color(0xFFEFEFEF)),
                         )),
-                    // Expanded(flex: 32, child: SizedBox()),
-                    // Expanded(flex: 19, child: Text('Event Date')),
-                    // Expanded(flex: 13, child: SizedBox()),
+                    Expanded(flex: 24, child: SizedBox()),
+                    Expanded(
+                        flex: 19,
+                        child: Row(
+                          children: <Widget>[
+                            Text('Event by MACE'),
+                            Checkbox(
+                                value: addval.mace,
+                                onChanged: (val) {
+                                  setState(() {
+                                    addval.mace = val;
+                                  });
+                                })
+                          ],
+                        )),
                     // Expanded(
                     //     flex: 32,
                     //     child: Container(child:Row(children: <Widget>[IconButton(icon: Icon(Icons.calendar_today), onPressed: null),Text(addval.updatedate)],),),TextField(
@@ -131,7 +131,7 @@ class _AddEventState extends State<AddEvent> {
                         addval.images.length == 0
                             ? Center(
                                 child: Text(
-                                    'Add Images here,\nTap on the camera to add an image.\nDelete an Image by tapping the image.\nThe forst Image you add will be considered as title Image',
+                                    'Add Images here,\nTap on the camera to add an image.\nDelete an Image by tapping the image.\nThe first Image you add will be considered as title Image',
                                     textAlign: TextAlign.center,
                                     style: TextStyle(color: Colors.grey[400])))
                             : Container(),
@@ -194,41 +194,54 @@ class _AddEventState extends State<AddEvent> {
                     //         Text('')
                     //       ],
                     //     )),
-                    Expanded(flex: 51, child: SizedBox()),
+                    Expanded(flex: 24, child: SizedBox()),
                     Expanded(
-                        flex: 45,
-                        child: FlatButton(
+                      flex: 45,
+                      child: Builder(builder: (BuildContext ctxt) {
+                        return FlatButton(
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10)),
                           color: Color(0xFF04294F),
                           child: Text('Submit',
                               style: TextStyle(color: Colors.white)),
                           onPressed: () async {
-                            setState(() {
-                              load = true;
-                            });
-                            try {
-                              await CloudService(
-                                      index: (ModalRoute.of(context)
-                                              .settings
-                                              .arguments)
-                                          .toString())
-                                  .updateData(
-                                      addval.name,
-                                      addval.desc,
-                                      addval.createdate,
-                                      addval.updatedate,
-                                      ModalRoute.of(context).settings.arguments,
-                                      addval.images);
-                            } catch (e) {
-                              print(e);
+                            bool con = await testcon();
+                            if (con) {
+                              setState(() {
+                                load = true;
+                              });
+                              try {
+                                await CloudService(
+                                        index: (ModalRoute.of(context)
+                                                .settings
+                                                .arguments)
+                                            .toString())
+                                    .updateData(
+                                        addval.name,
+                                        addval.desc,
+                                        addval.createdate,
+                                        addval.updatedate,
+                                        ModalRoute.of(context)
+                                            .settings
+                                            .arguments,
+                                        addval.images,
+                                        addval.mace);
+                              } catch (e) {
+                                print(e);
+                              }
+                              setState(() {
+                                load = false;
+                              });
+                              Navigator.pop(context);
+                            } else {
+                              Scaffold.of(ctxt).showSnackBar(SnackBar(
+                                  content:
+                                      Text('Oops!, Poor Internet Connection')));
                             }
-                            setState(() {
-                              load = false;
-                            });
-                            Navigator.pop(context);
                           },
-                        )),
+                        );
+                      }),
+                    ),
                     Expanded(
                       flex: 25,
                       child: SizedBox(),

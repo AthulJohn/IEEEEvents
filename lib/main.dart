@@ -23,6 +23,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xFF04294F),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
+      darkTheme: ThemeData(brightness: Brightness.dark),
       initialRoute: '/',
       routes: {
         '/': (context) => MainScreen(),
@@ -53,7 +54,7 @@ class _MainScreenState extends State<MainScreen> {
       setState(() {
         tobereturned = MyHomePage();
       });
-    }
+    } else {}
   }
 
   @override

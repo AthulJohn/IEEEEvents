@@ -13,9 +13,10 @@ class Event {
   String theme;
   int active, done;
   List<File> images;
+  bool mace;
   Event(this.index, this.name, this.desc, this.createdate, this.updatedate,
       this.theme, this.images, this.lind,
-      {this.active = 0, this.done = 0});
+      {this.active = 0, this.done = 0, this.mace});
 }
 
 Future<bool> logincheck() async {

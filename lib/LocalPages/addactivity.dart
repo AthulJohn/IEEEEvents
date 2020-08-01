@@ -140,14 +140,13 @@ class _AddActivityState extends State<AddActivity> {
                                   icon: Icon(Icons.calendar_today, size: 15),
                                   onPressed: () async {
                                     addval.updatedate = await showDatePicker(
-                                        context: context,
-                                        initialEntryMode:
-                                            DatePickerEntryMode.calendar,
-                                        initialDate: DateTime.now(),
-                                        firstDate: DateTime(2018),
-                                        lastDate: DateTime(2100));
-                                    // if (addval.updatedate == null)
-                                    //   addval.updatedate = DateTime.now();
+                                            context: context,
+                                            initialEntryMode:
+                                                DatePickerEntryMode.calendar,
+                                            initialDate: DateTime.now(),
+                                            firstDate: DateTime(2018),
+                                            lastDate: DateTime(2100)) ??
+                                        addval.updatedate;
                                     setState(() {
                                       datecheck = false;
                                       firsttry = false;
@@ -191,42 +190,54 @@ class _AddActivityState extends State<AddActivity> {
                       child: SizedBox(),
                     ),
                     Expanded(
-                      child: FlatButton(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 7),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: Text('Submit',
-                            style: TextStyle(color: Colors.white)),
-                        color: color[0],
-                        onPressed: () async {
-                          setState(() {
-                            load = true;
-                          });
-                          List name = ModalRoute.of(context).settings.arguments;
+                      child: Builder(builder: (BuildContext ctxt) {
+                        return FlatButton(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 20, vertical: 7),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Text('Submit',
+                              style: TextStyle(color: Colors.white)),
+                          color: color[0],
+                          onPressed: () async {
+                            bool con = await testcon();
+                            if (con) {
+                              setState(() {
+                                load = true;
+                              });
+                              List name =
+                                  ModalRoute.of(context).settings.arguments;
 
-                          setState(() {
-                            addval.index = name[1];
-                            addval.createdate = DateTime.now();
-                          });
-                          try {
-                            await CloudService(index: name[0]).updateDate(
-                                name[0], DateTime.now(), name[2] + 1);
-                            await CloudService(index: (name[0])).updateactivity(
-                                addval.name,
-                                addval.desc,
-                                addval.createdate ?? DateTime.now(),
-                                name[2],
-                                addval.updatedate ?? DateTime.now());
-                          } catch (e) {
-                            print(e);
-                          }
-                          setState(() {
-                            load = false;
-                          });
-                          Navigator.pop(context);
-                        },
-                      ),
+                              setState(() {
+                                addval.index = name[1];
+                                addval.createdate = DateTime.now();
+                              });
+                              try {
+                                await CloudService(index: name[0]).updateDate(
+                                    name[0], DateTime.now(), name[2] + 1);
+                                await CloudService(index: (name[0]))
+                                    .updateactivity(
+                                        addval.name,
+                                        addval.desc,
+                                        addval.createdate ?? DateTime.now(),
+                                        name[2],
+                                        addval.updatedate ?? DateTime.now());
+                              } catch (e) {
+                                print(e);
+                              }
+
+                              setState(() {
+                                load = false;
+                              });
+                              Navigator.pop(context);
+                            } else {
+                              Scaffold.of(ctxt).showSnackBar(SnackBar(
+                                  content:
+                                      Text('Oops!, Poor Internet Connection')));
+                            }
+                          },
+                        );
+                      }),
                       flex: 47,
                     ),
                     Expanded(

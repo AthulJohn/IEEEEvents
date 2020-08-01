@@ -6,6 +6,7 @@ import 'loadingpage.dart';
 
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 
 class Update extends StatefulWidget {
   final Event event;
@@ -215,9 +216,6 @@ class _UpdateState extends State<Update> {
                                                               i < getl(images);
                                                               i++)
                                                             Container(
-                                                              // margin:
-                                                              //     EdgeInsets.all(8),
-                                                              // height: 30,
                                                               child: Stack(
                                                                 children: <
                                                                     Widget>[
@@ -232,7 +230,6 @@ class _UpdateState extends State<Update> {
                                                                     ),
                                                                   ),
                                                                   Container(
-                                                                    // width: 30,
                                                                     child:
                                                                         Center(
                                                                       child: IconButton(
@@ -261,7 +258,6 @@ class _UpdateState extends State<Update> {
                                                             Container(
                                                               margin: EdgeInsets
                                                                   .all(8),
-                                                              // height: 30,
                                                               child: Stack(
                                                                 children: <
                                                                     Widget>[
@@ -306,25 +302,6 @@ class _UpdateState extends State<Update> {
                                                       )),
                                                 ]),
                                               )
-                                              // Container(
-                                              //   height: 42,
-                                              //   child: Row(
-                                              //     children: <Widget>[
-                                              //       Text('Event Background'),
-                                              //       FlatButton(
-                                              //         child: Text('Change'),
-                                              //         onPressed: () {},
-                                              //       )
-                                              //     ],
-                                              //   ),
-                                              // ),
-                                              // Container(
-                                              //     margin: EdgeInsets.all(10),
-                                              //     height: 42,
-                                              //     child: FlatButton(
-                                              //       child: Text('Change'),
-                                              //       onPressed: () {},
-                                              //     )),
                                             ])
                                       : Column(
                                           crossAxisAlignment:
@@ -384,6 +361,66 @@ class _UpdateState extends State<Update> {
                                                   fillColor: Color(0xFFEFEFEF)),
                                               maxLines: 4,
                                             ),
+                                            SizedBox(
+                                              height: 15,
+                                            ),
+                                            Text(
+                                              'Activity Date',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: 13,
+                                            ),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                  color: Color(0xFFEFEFEF),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              width: w(151, context),
+                                              child: Row(
+                                                children: <Widget>[
+                                                  IconButton(
+                                                    icon: Icon(
+                                                        Icons.calendar_today,
+                                                        size: 15),
+                                                    onPressed: () async {
+                                                      activities[index - 1]
+                                                          .updatedate = await showDatePicker(
+                                                              context: context,
+                                                              initialEntryMode:
+                                                                  DatePickerEntryMode
+                                                                      .calendar,
+                                                              initialDate:
+                                                                  activities[
+                                                                          index -
+                                                                              1]
+                                                                      .updatedate,
+                                                              firstDate:
+                                                                  DateTime(
+                                                                      2018),
+                                                              lastDate:
+                                                                  DateTime(
+                                                                      2100)) ??
+                                                          activities[index - 1]
+                                                              .updatedate;
+                                                      setState(() {});
+                                                    },
+                                                  ),
+                                                  Text(
+                                                    DateFormat('dd-MM-yyyy')
+                                                        .format(activities[
+                                                                index - 1]
+                                                            .updatedate),
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
                                           ],
                                         ));
                         },
@@ -391,8 +428,9 @@ class _UpdateState extends State<Update> {
                   Expanded(
                     flex: 60,
                     child: Container(
-                        margin: EdgeInsets.fromLTRB(30, 5, 0, 5),
-                        child: FlatButton(
+                      margin: EdgeInsets.fromLTRB(30, 5, 0, 5),
+                      child: Builder(builder: (BuildContext ctxt) {
+                        return FlatButton(
                           padding:
                               EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                           shape: RoundedRectangleBorder(
@@ -402,23 +440,32 @@ class _UpdateState extends State<Update> {
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () async {
-                            setState(() {
-                              load = true;
-                              addval.active = switchvalue ? 1 : 0;
-                            });
-                            try {
-                              await CloudService()
-                                  .editData(addval, activities, added, removed);
-                            } catch (e) {
-                              print(e);
+                            bool con = await testcon();
+                            if (con) {
+                              setState(() {
+                                load = true;
+                                addval.active = switchvalue ? 1 : 0;
+                              });
+                              try {
+                                await CloudService().editData(
+                                    addval, activities, added, removed);
+                              } catch (e) {
+                                print(e);
+                              }
+                              setState(() {
+                                load = false;
+                              });
+                              Navigator.pop(context);
+                            } else {
+                              Scaffold.of(ctxt).showSnackBar(SnackBar(
+                                  content:
+                                      Text('Oops!, Poor Internet Connection')));
                             }
-                            setState(() {
-                              load = false;
-                            });
-                            Navigator.pop(context);
                           },
                           color: color[0],
-                        )),
+                        );
+                      }),
+                    ),
                   ),
                 ],
               ),
