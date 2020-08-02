@@ -82,15 +82,18 @@ class _StartState extends State<Start> {
                     ),
                   ),
                   Container(
-                    width: w(150, context),
+                    width: w(125, context),
                     child: RotateAnimatedTextKit(
+                        totalRepeatCount: 1,
                         textStyle: TextStyle(
                           fontSize: h(25, context),
                         ),
+                        pause: Duration(microseconds: 0),
                         duration: Duration(
-                          milliseconds: 400,
+                          milliseconds: 450,
                         ),
                         text: [
+                          '',
                           'Involvement',
                           'Exploration',
                           'Engagement',

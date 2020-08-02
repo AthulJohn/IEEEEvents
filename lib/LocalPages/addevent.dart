@@ -8,8 +8,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
 class AddEvent extends StatefulWidget {
-  // final int len;
-  // AddEvent(this.len);
   @override
   _AddEventState createState() => _AddEventState();
 }

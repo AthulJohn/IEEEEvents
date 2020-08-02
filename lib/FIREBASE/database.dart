@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_image_compress/flutter_image_compress.dart';
+// import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'dart:io';
 import 'package:design/functions.dart';
 import 'dart:math';
 import 'package:path/path.dart' as Path;
-import 'package:path_provider/path_provider.dart' as path_provider;
+// import 'package:path_provider/path_provider.dart' as path_provider;
 
 class CloudService {
   final String index;
@@ -15,9 +15,8 @@ class CloudService {
       Firestore.instance.collection('events');
 
   Future updateDate(String name, DateTime udate, int ind) async {
-    return await eventCollection
-        .document(name)
-        .updateData({'update': udate, 'done': 1, 'lastind': ind});
+    return await eventCollection.document(name).updateData(
+        {'update': udate.toIso8601String(), 'done': 1, 'lastind': ind});
   }
 
   Future updateData(String name, String desc, DateTime cdate, DateTime udate,
@@ -27,8 +26,8 @@ class CloudService {
     await eventCollection.document(name).setData({
       'name': name,
       'desc': desc,
-      'create': cdate,
-      'update': udate,
+      'create': cdate.toIso8601String(),
+      'update': udate.toIso8601String(),
       'index': ind,
       'theme': images[0],
       'active': 1,
@@ -113,11 +112,10 @@ class CloudService {
     await eventCollection.document(event.name).updateData({
       'theme': imgs[0],
       'desc': event.desc,
-      'update': DateTime.now(),
+      'update': DateTime.now().toIso8601String(),
       'active': event.active,
     });
     for (Event i in activities) {
-      print(i.name + ' ${event.lind}');
       await eventCollection
           .document(event.name)
           .collection('activity')
@@ -125,7 +123,7 @@ class CloudService {
           .updateData({
         'name': i.name,
         'desc': i.desc,
-        'activitydate': i.updatedate,
+        'activitydate': i.updatedate.toIso8601String(),
       });
     }
     return;
@@ -140,43 +138,43 @@ class CloudService {
         .setData({
       'name': name,
       'desc': desc,
-      'create': cdate,
+      'create': cdate.toIso8601String(),
       'index': acindex,
-      'activitydate': dt,
+      'activitydate': dt.toIso8601String(),
     });
   }
 
-  List<Event> _listfromsnap(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return Event(
-        doc.data['index'] ?? 0,
-        doc.data['name'] ?? '',
-        doc.data['desc'] ?? '',
-        doc.data['create'].toDate() ?? DateTime.now(),
-        doc.data['update'].toDate() ?? DateTime.now(),
-        doc.data['theme'],
-        [],
-        doc.data['lastind'],
-        active: doc.data['active'],
-        done: doc.data['done'],
-        mace: doc.data['mace'],
-      );
-    }).toList();
-  }
+  // List<Event> _listfromsnap(QuerySnapshot snapshot) {
+  //   return snapshot.documents.map((doc) {
+  //     return Event(
+  //       doc.data['index'] ?? 0,
+  //       doc.data['name'] ?? '',
+  //       doc.data['desc'] ?? '',
+  //       doc.data['create'].toDate() ?? DateTime.now(),
+  //       doc.data['update'].toDate() ?? DateTime.now(),
+  //       doc.data['theme'],
+  //       [],
+  //       doc.data['lastind'],
+  //       active: doc.data['active'],
+  //       done: doc.data['done'],
+  //       mace: doc.data['mace'],
+  //     );
+  //   }).toList();
+  // }
 
-  List<Event> _listfromact(QuerySnapshot snapshot) {
-    return snapshot.documents.map((doc) {
-      return Event(
-          doc.data['index'] ?? 0,
-          doc.data['name'] ?? '',
-          doc.data['desc'] ?? '',
-          doc.data['create'].toDate() ?? DateTime.now(),
-          doc.data['activitydate'].toDate() ?? DateTime.now(),
-          '',
-          [],
-          0);
-    }).toList();
-  }
+  // List<Event> _listfromact(QuerySnapshot snapshot) {
+  //   return snapshot.documents.map((doc) {
+  //     return Event(
+  //         doc.data['index'] ?? 0,
+  //         doc.data['name'] ?? '',
+  //         doc.data['desc'] ?? '',
+  //         doc.data['create'].toDate() ?? DateTime.now(),
+  //         doc.data['activitydate'].toDate() ?? DateTime.now(),
+  //         '',
+  //         [],
+  //         0);
+  //   }).toList();
+  // }
 
   Future delet(String nm) async {
     await eventCollection
@@ -198,19 +196,19 @@ class CloudService {
           .document(nm)
           .collection('images')
           .getDocuments()
-          .then((snapshot) {
+          .then((snapshot) async {
         for (DocumentSnapshot ds in snapshot.documents) {
-          ds.reference.delete();
+          await ds.reference.delete();
         }
       });
       await eventCollection
           .document(nm)
           .collection('imagepath')
           .getDocuments()
-          .then((snapshot) {
+          .then((snapshot) async {
         for (DocumentSnapshot ds in snapshot.documents) {
-          FirebaseStorage.instance.ref().child(ds.data['path']).delete();
-          ds.reference.delete();
+          await FirebaseStorage.instance.ref().child(ds.data['path']).delete();
+          await ds.reference.delete();
         }
       });
     }
@@ -225,16 +223,57 @@ class CloudService {
         .delete();
   }
 
-  Stream<List<Event>> get events {
-    return eventCollection.snapshots().map(_listfromsnap);
+  // Stream<List<Event>> get events {
+  //   return eventCollection.snapshots().map(_listfromsnap);
+  // }
+
+  // Stream<List<Event>> acts(String index) {
+  //   return eventCollection
+  //       .document(index)
+  //       .collection('activity')
+  //       .snapshots()
+  //       .map(_listfromact);
+  // }
+
+  Future<List<Event>> getevents() async {
+    List<Event> events = [];
+    final shots = await eventCollection.getDocuments();
+    for (var i in shots.documents) {
+      events.add(Event(
+        i.data['index'] ?? 0,
+        i.data['name'] ?? '',
+        i.data['desc'] ?? '',
+        DateTime.parse(i.data['create']) ?? DateTime.now(),
+        DateTime.parse(i.data['update']) ?? DateTime.now(),
+        i.data['theme'],
+        [],
+        i.data['lastind'],
+        active: i.data['active'],
+        done: i.data['done'],
+        mace: i.data['mace'],
+      ));
+    }
+    return events;
   }
 
-  Stream<List<Event>> acts(String index) {
-    return eventCollection
-        .document(index)
+  Future<List<Event>> getactivities(String name) async {
+    List<Event> activities = [];
+    final shots = await eventCollection
+        .document(name)
         .collection('activity')
-        .snapshots()
-        .map(_listfromact);
+        .getDocuments();
+    for (var doc in shots.documents) {
+      activities.add(Event(
+          doc.data['index'] ?? 0,
+          doc.data['name'] ?? '',
+          doc.data['desc'] ?? '',
+          DateTime.parse(doc.data['create']) ?? DateTime.now(),
+          DateTime.parse(doc.data['activitydate']) ?? DateTime.now(),
+          '',
+          [],
+          0));
+    }
+    return activities;
   }
 
   Future<List<String>> getimage(String name) async {

@@ -187,7 +187,7 @@ class _UpdateState extends State<Update> {
                                                           0
                                                       ? Center(
                                                           child: Text(
-                                                              'Add Images here,\nTap on the camera to add an image.\nDelete an Image by tapping the image.\nThe forst Image you add will be considered as title Image',
+                                                              'Add Images here,\nTap on the camera to add an image.\nDelete an Image by tapping the image.\nThe first image will be considered as the theme image',
                                                               textAlign:
                                                                   TextAlign
                                                                       .center,

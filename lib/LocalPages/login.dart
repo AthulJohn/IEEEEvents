@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class LoginDialog extends StatefulWidget {
+  final ValueChanged<bool> logval;
+  LoginDialog(this.logval);
   @override
   _LoginDialogState createState() => _LoginDialogState();
 }
 
 class _LoginDialogState extends State<LoginDialog> {
-  String _email, _password;
+  String _email = '', _password = '';
   FirebaseAuth _auth = FirebaseAuth.instance;
   bool loadingg = false;
   String warningtext = '';
@@ -86,6 +88,7 @@ class _LoginDialogState extends State<LoginDialog> {
                           // loged = true;
                           return true;
                         });
+                        widget.logval(true);
                         Navigator.of(context).pop();
                       } else
                         setState(() {

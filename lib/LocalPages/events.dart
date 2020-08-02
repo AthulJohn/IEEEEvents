@@ -1,4 +1,4 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
+// import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:design/LocalPages/gallery.dart';
 import 'package:design/Widgets/RoundButton.dart';
 // import 'loadingpage.dart';
@@ -7,7 +7,9 @@ import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:design/functions.dart';
 import 'package:design/values.dart';
-import 'package:provider/provider.dart';
+// import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:design/FIREBASE/database.dart';
 import 'package:intl/intl.dart';
 import 'update.dart';
@@ -27,65 +29,63 @@ class _EventsState extends State<Events> {
   @override
   Widget build(BuildContext context) {
     final Event event = ModalRoute.of(context).settings.arguments;
-    return StreamProvider<List<Event>>.value(
-        value: CloudService().acts(event.name),
-        child: Scaffold(
-          body: Stack(
-            children: <Widget>[
-              CustomScrollView(
-                controller: scrollController,
-                slivers: <Widget>[
-                  SliverAppBar(
-                    leading: Container(),
-                    shape: ContinuousRectangleBorder(
-                        borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(74),
-                            bottomLeft: Radius.circular(74))),
-                    expandedHeight: 200,
-                    floating: true,
-                    pinned: true,
-                    flexibleSpace: FlexibleSpaceBar(
-                      collapseMode: CollapseMode.parallax,
-                      title: Text(
-                        // event.name,
-                        '',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      background: GestureDetector(
-                        onTap: () {
-                          Navigator.of(context)
-                              .push(_createRoute(event.name, event.theme));
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.vertical(
-                              bottom: Radius.circular(30)),
-                          child: Hero(
-                            tag: '0',
-                            child: CachedNetworkImage(
-                                imageUrl: event.theme, fit: BoxFit.cover),
-                          ),
-                        ),
+    return Scaffold(
+      body: Stack(
+        children: <Widget>[
+          CustomScrollView(
+            controller: scrollController,
+            slivers: <Widget>[
+              SliverAppBar(
+                leading: Container(),
+                shape: ContinuousRectangleBorder(
+                    borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(74),
+                        bottomLeft: Radius.circular(74))),
+                expandedHeight: 200,
+                floating: true,
+                pinned: true,
+                flexibleSpace: FlexibleSpaceBar(
+                  collapseMode: CollapseMode.parallax,
+                  title: Text(
+                    // event.name,
+                    '',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  background: GestureDetector(
+                    onTap: () {
+                      Navigator.of(context)
+                          .push(_createRoute(event.name, event.theme));
+                    },
+                    child: ClipRRect(
+                      borderRadius:
+                          BorderRadius.vertical(bottom: Radius.circular(30)),
+                      child: Hero(
+                        tag: '0',
+                        child: CachedNetworkImage(
+                            imageUrl: event.theme, fit: BoxFit.cover),
                       ),
                     ),
                   ),
-                  ActList(event),
-                ],
+                ),
               ),
-              Positioned(
-                child: SafeArea(
-                    child: RoundButton(
-                        color: color[0],
-                        icon: Icon(Icons.arrow_back, color: Colors.white),
-                        onpressed: () {
-                          Navigator.pop(context);
-                        },
-                        size: h(40, context))),
-              )
+              ActList(event),
             ],
           ),
-        ));
+          Positioned(
+            child: SafeArea(
+                child: RoundButton(
+                    color: color[0],
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onpressed: () {
+                      Navigator.pop(context);
+                    },
+                    size: h(40, context))),
+          )
+        ],
+      ),
+    );
   }
 }
 
@@ -100,21 +100,31 @@ class _ActListState extends State<ActList> {
   List<Event> activities;
   bool descac = false, open = false;
   bool delete = false, load = false, loading = false, loged = false;
-  Future check() async {
+  void check() async {
     loged = await logincheck();
+    activities =
+        await CloudService().getactivities(widget.event.name); //.then((val) {
+    //   setState(() {});
+    //   return;
+    // });
+    if (activities != null)
+      activities.sort(
+        (a, b) => a.updatedate.compareTo(b.updatedate),
+      );
+    if (this.mounted) setState(() {});
   }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
     check();
-    activities = Provider.of<List<Event>>(context);
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (BuildContext conxt, int ind) {
-          if (activities != null)
-            activities.sort(
-              (a, b) => a.updatedate.compareTo(b.updatedate),
-            );
           if (ind == 1)
             return AnimatedCrossFade(
               firstCurve: Curves.easeIn,
@@ -125,10 +135,20 @@ class _ActListState extends State<ActList> {
               firstChild: Padding(
                 padding: EdgeInsets.symmetric(
                     vertical: 8.0, horizontal: w(28, context)),
-                child: Text(
-                  widget.event.desc,
-                  style: TextStyle(fontSize: 18),
-                ),
+                child: Builder(builder: (BuildContext ctxt) {
+                  return Linkify(
+                    text: widget.event.desc,
+                    onOpen: (link) async {
+                      if (await canLaunch(link.url)) {
+                        await launch(link.url);
+                      } else {
+                        Scaffold.of(ctxt).showSnackBar(SnackBar(
+                            content: Text('Could not launch the url !')));
+                      }
+                    },
+                    style: TextStyle(fontSize: 18),
+                  );
+                }),
               ),
               secondChild: Container(),
             );
@@ -139,7 +159,7 @@ class _ActListState extends State<ActList> {
                 horizontal: w(28, context),
               ),
               child: Container(
-                height: h(50, context),
+                //height: h(50, context),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
@@ -191,12 +211,13 @@ class _ActListState extends State<ActList> {
                                   Icons.edit,
                                   color: Colors.white,
                                 ),
-                                onpressed: () {
-                                  Navigator.push(
+                                onpressed: () async {
+                                  await Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => Update(
                                               widget.event, activities)));
+                                  setState(() {});
                                 },
                               ),
                               RoundButton(
@@ -258,13 +279,15 @@ class _ActListState extends State<ActList> {
                                   size: w(20, context),
                                   color: Colors.white,
                                 ),
-                                onpressed: () {
-                                  Navigator.pushNamed(context, 'addact',
+                                onpressed: () async {
+                                  await Navigator.pushNamed(context, 'addact',
                                       arguments: [
                                         widget.event.name,
                                         getl(activities),
                                         widget.event.lind
                                       ]);
+                                  check();
+                                  setState(() {});
                                 },
                               ),
                             ],
@@ -362,6 +385,7 @@ class _ActListState extends State<ActList> {
                           header: Container(
                             width: w(330, context),
                             child: Card(
+                              color: Color(0xFFe4f9ff),
                               elevation: 2,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(13)),
@@ -369,13 +393,58 @@ class _ActListState extends State<ActList> {
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 15, horizontal: 10),
                                   // child: Center(
-                                  child: Text(
-                                    '${activities[ind - 2].name}',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18,
-                                        color: Colors.black),
-                                    // ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: <Widget>[
+                                      Text(
+                                        '${activities[ind - 2].name}',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                            color: Colors.black),
+                                        // ),
+                                      ),
+                                      SizedBox(
+                                        width: w(20, context),
+                                      ),
+                                      if (activities[ind - 2]
+                                                  .updatedate
+                                                  .difference(DateTime.now())
+                                                  .inDays ==
+                                              0 &&
+                                          activities[ind - 2].updatedate.day ==
+                                              DateTime.now().day)
+                                        Text(
+                                          'Today',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                              color: Color(0xFFFFCC51)),
+                                        )
+                                      else if (activities[ind - 2]
+                                                  .updatedate
+                                                  .difference(DateTime.now())
+                                                  .inDays <
+                                              3 &&
+                                          activities[ind - 2].updatedate.day ==
+                                              DateTime.now().day + 1)
+                                        Text(
+                                          'Tomorrow',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                              color: Color(0xFF5DC3E0)),
+                                        )
+                                      else
+                                        Text(
+                                          '${activities[ind - 2].updatedate.day} ${DateFormat('MMM').format(activities[ind - 2].updatedate).toUpperCase()}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 15,
+                                              color: Colors.grey[700]),
+                                        )
+                                    ],
                                   )),
                             ),
                           ),
@@ -383,6 +452,7 @@ class _ActListState extends State<ActList> {
                               margin: EdgeInsets.only(top: 0),
                               width: w(330, context),
                               child: Card(
+                                color: Color(0xFFe4f9ff),
                                 shape: RoundedRectangleBorder(
                                     side: BorderSide(color: Colors.grey),
                                     borderRadius: BorderRadius.vertical(
@@ -390,38 +460,122 @@ class _ActListState extends State<ActList> {
                                 child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10, vertical: 15),
-                                    child: Text(
-                                      '${activities[ind - 2].name}',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 18,
-                                          color: Colors.black),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: <Widget>[
+                                        Text(
+                                          '${activities[ind - 2].name}',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 18,
+                                              color: Colors.black),
+                                        ),
+                                        SizedBox(
+                                          width: w(20, context),
+                                        ),
+                                        if ('${activities[ind - 2].updatedate.month}${activities[ind - 2].updatedate.year}' ==
+                                            '${DateTime.now().month}${DateTime.now().year}')
+                                          if (activities[ind - 2]
+                                                  .updatedate
+                                                  .day ==
+                                              DateTime.now().day)
+                                            Text(
+                                              'Today',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: Color(0xFFFFCC51)),
+                                            )
+                                          else if (activities[ind - 2]
+                                                  .updatedate
+                                                  .day ==
+                                              DateTime.now().day + 1)
+                                            Text(
+                                              'Tomorrow',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 15,
+                                                  color: Color(0xFF5DC3E0)),
+                                            )
+                                      ],
                                     )),
                               )),
                           children: <Widget>[
                             Container(
                               width: w(320, context),
-                              color: Color(0xFFC4C4C4),
-                              child: Column(
+                              color: Color(0xFFbbe1fa), //color[0]
+                              //.withOpacity(0.2),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Text(
-                                    activities[ind - 2].desc,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(fontSize: 18),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Column(
+                                      children: <Widget>[
+                                        Container(
+                                          margin: EdgeInsets.only(top: 8),
+                                          child: Text(
+                                            '${activities[ind - 2].updatedate.day}',
+                                            style: TextStyle(
+                                              fontFamily: 'quicksand',
+                                              fontSize: 30,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          '${DateFormat('MMM').format(activities[ind - 2].updatedate).toUpperCase()}\n${activities[ind - 2].updatedate.year}',
+                                          //   style: TextStyle(
+                                          //     fontSize: 15,
+                                          //   ),
+                                          // ),
+                                          // Text(
+                                          textAlign: TextAlign.justify,
+                                          style: TextStyle(
+                                            fontFamily: 'quicksand',
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Icon(Icons.calendar_today),
-                                      Text(
-                                        'Date:' +
-                                            DateFormat('dd-MM-yyyy').format(
-                                                activities[ind - 2].updatedate),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(fontSize: 18),
-                                      ),
-                                    ],
+                                  Expanded(
+                                    flex: 4,
+                                    child:
+                                        Builder(builder: (BuildContext ctxt) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Linkify(
+                                          text: activities[ind - 2].desc,
+                                          onOpen: (link) async {
+                                            if (await canLaunch(link.url)) {
+                                              await launch(link.url);
+                                            } else {
+                                              Scaffold.of(ctxt).showSnackBar(
+                                                  SnackBar(
+                                                      content: Text(
+                                                          'Could not launch the url !')));
+                                            }
+                                          },
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 18),
+                                        ),
+                                      );
+                                    }),
                                   ),
+                                  // Row(
+                                  //   mainAxisAlignment: MainAxisAlignment.center,
+                                  //   children: <Widget>[
+                                  //     Icon(Icons.calendar_today),
+                                  //     Text(
+                                  //       'Date:' +
+                                  //           DateFormat('dd-MM-yyyy').format(
+                                  //               activities[ind - 2].updatedate),
+                                  //       textAlign: TextAlign.center,
+                                  //       style: TextStyle(fontSize: 18),
+                                  //     ),
+                                  //   ],
+                                  // ),
                                 ],
                               ),
                             ),
@@ -429,7 +583,7 @@ class _ActListState extends State<ActList> {
                               padding: EdgeInsets.only(bottom: 8),
                               width: w(320, context),
                               decoration: BoxDecoration(
-                                  color: Color(0xFFC4C4C4),
+                                  color: Color(0xFFbbe1fa), //Color(0xFFC4C4C4),
                                   borderRadius: BorderRadius.vertical(
                                       bottom: Radius.circular(30))),
                               child: Text(
@@ -437,6 +591,7 @@ class _ActListState extends State<ActList> {
                                     DateFormat('dd-MM-yyyy')
                                         .format(activities[ind - 2].createdate),
                                 textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 10),
                               ),
                             )
                           ],
@@ -483,25 +638,9 @@ class Nothing extends StatelessWidget {
                   vertical: h(120, context),
                   horizontal: 20,
                 ),
-                child: ColorizeAnimatedTextKit(
-                  pause: Duration(seconds: 0),
-                  isRepeatingAnimation: true,
-                  repeatForever: true,
-                  speed: Duration(milliseconds: 50),
-                  textAlign: TextAlign.center,
-                  colors: [
-                    Colors.transparent,
-                    color[0].withOpacity(0.6),
-                    Colors.transparent,
-                    color[0].withOpacity(0.3),
-                    Colors.transparent
-                  ],
-                  textStyle: TextStyle(fontSize: 35, color: color[0]),
-                  text: [
-                    "Something Big is Cooking",
-                    "but it's not yet ready!",
-                    "Stay Tuned..."
-                  ],
+                child: Text(
+                  'Something Big is Cooking 🥘',
+                  style: TextStyle(fontSize: 20, color: Colors.grey[700]),
                 ))) //)
         : Center(
             child: Container(

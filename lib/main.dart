@@ -50,7 +50,7 @@ class _MainScreenState extends State<MainScreen> {
     connection = await testcon();
     if (connection) {
       first = false;
-      await Future.delayed(Duration(milliseconds: 4000));
+      await Future.delayed(Duration(milliseconds: 2700));
       setState(() {
         tobereturned = MyHomePage();
       });
