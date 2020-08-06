@@ -24,7 +24,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool loged = false,
-      grid = false,
+      grid = true,
       view = false,
       filter = false,
       sort = false,
@@ -308,8 +308,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   });
                                   _itemState.currentState.filter(1);
                                 },
-                                color: Color(0xFFFFF0CC)
-                                    .withOpacity(upcoming ? 1 : 0.5),
+                                color: Color(0xFF2aa665)
+                                    .withOpacity(upcoming ? 0.75 : 0.25),
                               ),
                               FlatButton(
                                 shape: RoundedRectangleBorder(
@@ -331,8 +331,8 @@ class _MyHomePageState extends State<MyHomePage> {
                                   });
                                   _itemState.currentState.filter(2);
                                 },
-                                color: Color(0xFFCCEFF9)
-                                    .withOpacity(ongoing ? 1 : 0.5),
+                                color: Color(0xFFff823a)
+                                    .withOpacity(ongoing ? 0.75 : 0.25),
                               ),
                             ],
                           ),
@@ -820,13 +820,22 @@ class _ItemsState extends State<Items> {
   @override
   Widget build(BuildContext context) {
     return getl(events) != 0
-        ? AnimatedSwitcher(
-            switchInCurve: Curves.easeInCubic,
-            switchOutCurve: Curves.easeInCubic,
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return FadeTransition(child: child, opacity: animation);
+        ? // AnimatedSwitcher(
+        //     switchInCurve: Curves.easeInCubic,
+        //     switchOutCurve: Curves.easeInCubic,
+        //     transitionBuilder: (Widget child, Animation<double> animation) {
+        //       return FadeTransition(child: child, opacity: animation);
+        //     },
+        //     duration: Duration(seconds: 1),
+        ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment(0.0, -0.90),
+                colors: <Color>[Colors.transparent, Colors.white],
+              ).createShader(bounds);
             },
-            duration: Duration(seconds: 1),
+            blendMode: BlendMode.dstIn,
             child: SmartRefresher(
               enablePullDown: true,
               enablePullUp: false,
@@ -835,7 +844,7 @@ class _ItemsState extends State<Items> {
               onRefresh: _onRefresh,
               child: GridView.builder(
                   controller: _controller,
-                  padding: EdgeInsets.only(top: 0.0),
+                  padding: EdgeInsets.only(top: 10.0),
                   key: Key('${widget.gridval}'),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: widget.gridval ? 2 : 1,
@@ -860,15 +869,17 @@ class _ItemsState extends State<Items> {
                           shape: RoundedRectangleBorder(
                               borderRadius:
                                   BorderRadius.circular(w(13, context))),
-                          color: events[index].active == 1
-                              ? events[index].done > 0
-                                  ? Color(0xFF6DD3F0)
-                                  : Color(0xFFFFCC51)
-                              : Color(0xFFF0F0F0),
+                          color: color[0].withOpacity(0.9),
+                          // Color(0xFF3b5f83)
+                          //     .withOpacity(0.8), //events[index].active == 1
+                          // ? events[index].done > 0
+                          //     ? Color(0xFFF0F0F0) //Color(0xFF6DD3F0)
+                          //     : Color(0xFFF0F0F0) //Color(0xFFFFCC51)
+                          // : Color(0xFFF0F0F0),
                           child: widget.gridval
                               ? Column(children: <Widget>[
                                   Expanded(
-                                    flex: 2,
+                                    flex: 5,
                                     child: Container(
                                       decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(
@@ -885,35 +896,81 @@ class _ItemsState extends State<Items> {
                                     ),
                                   ),
                                   Expanded(
+                                      flex: 2,
                                       child: Container(
-                                          padding: EdgeInsets.all(10),
+                                          padding: EdgeInsets.only(
+                                              top: 5, right: 10, left: 10),
                                           child: Text('${events[index].name}',
                                               style: TextStyle(
+                                                color: Colors.white,
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20,
+                                              )))),
+                                  Expanded(
+                                      child: Container(
+                                          // padding: EdgeInsets.all(10),
+                                          child: Text(
+                                              events[index].active == 1
+                                                  ? events[index].done > 0
+                                                      ? 'ongoing'
+                                                      : 'upcoming'
+                                                  : 'completed',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: events[index].active == 1
+                                                    ? events[index].done > 0
+                                                        ? Color(0xFFff823a)
+                                                        : Color(0xFF2aa666)
+                                                    : Colors.grey,
+                                                fontSize: 13,
                                               ))))
                                 ])
-                              : Container(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: w(15, context), vertical: 8),
-                                  child: Align(
-                                    heightFactor: 1.5,
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      '${events[index].name}',
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20,
+                              : Stack(
+                                  children: <Widget>[
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: w(15, context),
+                                          vertical: 8),
+                                      child: Align(
+                                        heightFactor: 1.5,
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          '${events[index].name}',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20,
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                    Positioned(
+                                        right: 5,
+                                        bottom: 5,
+                                        child: Text(
+                                            events[index].active == 1
+                                                ? events[index].done > 0
+                                                    ? 'ongoing          '
+                                                    : 'upcoming          '
+                                                : 'completed          ',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: events[index].active == 1
+                                                  ? events[index].done > 0
+                                                      ? Color(0xFFff823a)
+                                                      : Color(0xFF2aa666)
+                                                  : Colors.grey,
+                                              fontSize: 13,
+                                            )))
+                                  ],
                                 ),
                         ),
                       ),
                     );
                   },
                   itemCount: getl(events)),
-            ))
+            ),
+          )
         : events == null
             ? Center(child: Container(child: Text('Fetching data...')))
             : (Container(

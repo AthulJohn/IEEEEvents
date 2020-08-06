@@ -378,14 +378,13 @@ class _ActListState extends State<ActList> {
                     child: Center(
                       child: Container(
                         decoration: BoxDecoration(
-                            // color: Colors.grey,
                             borderRadius: BorderRadius.circular(13)),
                         width: w(330, context),
                         child: ConfigurableExpansionTile(
                           header: Container(
                             width: w(330, context),
                             child: Card(
-                              color: Color(0xFFe4f9ff),
+                              color: color[0],
                               elevation: 2,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(13)),
@@ -402,7 +401,7 @@ class _ActListState extends State<ActList> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
-                                            color: Colors.black),
+                                            color: Colors.white),
                                         // ),
                                       ),
                                       SizedBox(
@@ -442,7 +441,7 @@ class _ActListState extends State<ActList> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 15,
-                                              color: Colors.grey[700]),
+                                              color: Colors.grey[400]),
                                         )
                                     ],
                                   )),
@@ -452,7 +451,7 @@ class _ActListState extends State<ActList> {
                               margin: EdgeInsets.only(top: 0),
                               width: w(330, context),
                               child: Card(
-                                color: Color(0xFFe4f9ff),
+                                color: color[0],
                                 shape: RoundedRectangleBorder(
                                     side: BorderSide(color: Colors.grey),
                                     borderRadius: BorderRadius.vertical(
@@ -469,42 +468,59 @@ class _ActListState extends State<ActList> {
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 18,
-                                              color: Colors.black),
+                                              color: Colors.white),
                                         ),
                                         SizedBox(
                                           width: w(20, context),
                                         ),
-                                        if ('${activities[ind - 2].updatedate.month}${activities[ind - 2].updatedate.year}' ==
-                                            '${DateTime.now().month}${DateTime.now().year}')
-                                          if (activities[ind - 2]
-                                                  .updatedate
-                                                  .day ==
-                                              DateTime.now().day)
-                                            Text(
-                                              'Today',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
-                                                  color: Color(0xFFFFCC51)),
-                                            )
-                                          else if (activities[ind - 2]
-                                                  .updatedate
-                                                  .day ==
-                                              DateTime.now().day + 1)
-                                            Text(
-                                              'Tomorrow',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 15,
-                                                  color: Color(0xFF5DC3E0)),
-                                            )
+                                        if (activities[ind - 2]
+                                                    .updatedate
+                                                    .difference(DateTime.now())
+                                                    .inDays ==
+                                                0 &&
+                                            activities[ind - 2]
+                                                    .updatedate
+                                                    .day ==
+                                                DateTime.now().day)
+                                          Text(
+                                            'Today',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                                color: Color(0xFFFFCC51)),
+                                          )
+                                        else if (activities[ind - 2]
+                                                    .updatedate
+                                                    .difference(DateTime.now())
+                                                    .inDays <
+                                                3 &&
+                                            activities[ind - 2]
+                                                    .updatedate
+                                                    .day ==
+                                                DateTime.now().day + 1)
+                                          Text(
+                                            'Tomorrow',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                                color: Color(0xFF5DC3E0)),
+                                          )
+                                        else
+                                          Text(
+                                            '${activities[ind - 2].updatedate.day} ${DateFormat('MMM').format(activities[ind - 2].updatedate).toUpperCase()}',
+                                            style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15,
+                                                color: Colors.grey[400]),
+                                          )
                                       ],
                                     )),
                               )),
                           children: <Widget>[
                             Container(
                               width: w(320, context),
-                              color: Color(0xFFbbe1fa), //color[0]
+                              color:
+                                  Color(0xFF3b5f83).withOpacity(0.4), //color[0]
                               //.withOpacity(0.2),
                               child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -583,7 +599,8 @@ class _ActListState extends State<ActList> {
                               padding: EdgeInsets.only(bottom: 8),
                               width: w(320, context),
                               decoration: BoxDecoration(
-                                  color: Color(0xFFbbe1fa), //Color(0xFFC4C4C4),
+                                  color: Color(0xFF3b5f83)
+                                      .withOpacity(0.4), //Color(0xFFC4C4C4),
                                   borderRadius: BorderRadius.vertical(
                                       bottom: Radius.circular(30))),
                               child: Text(
