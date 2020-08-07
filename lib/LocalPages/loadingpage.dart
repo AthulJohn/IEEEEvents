@@ -34,13 +34,14 @@ class Loading extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Text(
-              '...Please Wait...',
+              '...Please Wait...\nSome processes may take more time',
+              textAlign: TextAlign.center,
               style: TextStyle(
                   color: Colors.white,
                   decoration: TextDecoration.none,
                   fontSize: 15),
             ),
-            SizedBox(height: w(20, context)),
+            SizedBox(height: h(20, context)),
             SpinKitDoubleBounce(
               color: Colors.white,
               size: h(100, context),

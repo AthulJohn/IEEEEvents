@@ -3,7 +3,6 @@ import 'package:design/LocalPages/gallery.dart';
 import 'package:design/Widgets/RoundButton.dart';
 // import 'loadingpage.dart';
 import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:design/functions.dart';
 import 'package:design/values.dart';
@@ -99,7 +98,8 @@ class ActList extends StatefulWidget {
 class _ActListState extends State<ActList> {
   List<Event> activities;
   bool descac = false, open = false;
-  bool delete = false, load = false, loading = false, loged = false;
+  bool delete = false, loading = false, loged = false;
+  String errortext = '';
   void check() async {
     loged = await logincheck();
     activities =
@@ -171,6 +171,7 @@ class _ActListState extends State<ActList> {
                             Expanded(
                               flex: 6,
                               child: Text('${widget.event.name}',
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.bold)),
@@ -230,39 +231,40 @@ class _ActListState extends State<ActList> {
                                 onpressed: () async {
                                   await showDialog(
                                       context: context,
-                                      barrierDismissible: true,
+                                      barrierDismissible: false,
                                       builder: (BuildContext context) {
-                                        return ModalProgressHUD(
-                                          inAsyncCall: load,
-                                          child: AlertDialog(
-                                            title: Text('Confirm Delete'),
-                                            actions: <Widget>[
-                                              FlatButton(
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text('No')),
-                                              FlatButton(
-                                                  onPressed: () async {
-                                                    setState(() {
-                                                      load = true;
-                                                      delete = true;
-                                                    });
-                                                    try {
-                                                      await CloudService()
-                                                          .delet(widget
-                                                              .event.name);
-                                                    } catch (e) {
-                                                      print(e);
-                                                    }
-                                                    setState(() {
-                                                      load = false;
-                                                    });
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  child: Text('Yes'))
-                                            ],
+                                        return AlertDialog(
+                                          title: Text(
+                                            'Confirm Delete\n$errortext',
+                                            overflow: TextOverflow.ellipsis,
                                           ),
+                                          actions: <Widget>[
+                                            FlatButton(
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('No')),
+                                            FlatButton(
+                                                onPressed: () async {
+                                                  setState(() {
+                                                    // load = true;
+                                                    delete = true;
+                                                  });
+                                                  try {
+                                                    await CloudService().delet(
+                                                        widget.event.name);
+                                                  } catch (e) {
+                                                    setState(() {
+                                                      errortext = e;
+                                                    });
+                                                  }
+                                                  // setState(() {
+                                                  //   load = false;
+                                                  // });
+                                                  Navigator.of(context).pop();
+                                                },
+                                                child: Text('Yes'))
+                                          ],
                                         );
                                       });
                                   if (delete) {
@@ -398,6 +400,7 @@ class _ActListState extends State<ActList> {
                                     children: <Widget>[
                                       Text(
                                         '${activities[ind - 2].name}',
+                                        overflow: TextOverflow.ellipsis,
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold,
                                             fontSize: 18,
@@ -465,6 +468,7 @@ class _ActListState extends State<ActList> {
                                       children: <Widget>[
                                         Text(
                                           '${activities[ind - 2].name}',
+                                          overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               fontSize: 18,
