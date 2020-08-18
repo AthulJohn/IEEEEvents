@@ -28,7 +28,7 @@ class _FiltersState extends State<Filters> {
             'All Events',
             style: TextStyle(
                 fontSize: widget.all ? 17 : 15,
-                color: widget.all ? color[0] : Colors.grey,
+                color: widget.all ? Color(0xFF04294F) : Colors.grey,
                 fontWeight: widget.all ? FontWeight.bold : FontWeight.normal),
           ),
           onPressed: widget.onall,
@@ -41,12 +41,14 @@ class _FiltersState extends State<Filters> {
             'Upcoming',
             style: TextStyle(
                 fontSize: widget.upcoming ? 17 : 15,
-                color: widget.upcoming ? color[0] : Colors.grey,
+                color: widget.upcoming ? Color(0xFF04294F) : Colors.grey,
                 fontWeight:
                     widget.upcoming ? FontWeight.bold : FontWeight.normal),
           ),
           onPressed: widget.onupcoming,
-          color: Color(0xFF2aa665).withOpacity(widget.upcoming ? 0.75 : 0.25),
+          color: Color(0xFFFFD8CC).withOpacity(widget.upcoming
+              ? 1
+              : 0.5), // Color(0xFF2aa665).withOpacity(widget.upcoming ? 0.75 : 0.25),
         ),
         FlatButton(
           shape:
@@ -55,12 +57,14 @@ class _FiltersState extends State<Filters> {
             'Ongoing',
             style: TextStyle(
                 fontSize: widget.ongoing ? 17 : 15,
-                color: widget.ongoing ? color[0] : Colors.grey,
+                color: widget.ongoing ? Color(0xFF04294F) : Colors.grey,
                 fontWeight:
                     widget.ongoing ? FontWeight.bold : FontWeight.normal),
           ),
           onPressed: widget.onongoing,
-          color: Color(0xFFff823a).withOpacity(widget.ongoing ? 0.75 : 0.25),
+          color: Color(0xFFFFD8CC).withOpacity(widget.ongoing
+              ? 1
+              : 0.5), // Color(0xFFff823a).withOpacity(widget.ongoing ? 0.75 : 0.25),
         ),
       ],
     );

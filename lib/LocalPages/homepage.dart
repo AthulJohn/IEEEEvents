@@ -14,6 +14,8 @@ import '../Widgets/RoundButton.dart';
 import 'homepageitems.dart';
 
 class MyHomePage extends StatefulWidget {
+  MyHomePage(this.events);
+  final List<Event> events;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -55,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: color[2],
       resizeToAvoidBottomInset: false,
       body: SizedBox.expand(
         child: Column(
@@ -63,10 +66,17 @@ class _MyHomePageState extends State<MyHomePage> {
               flex: 230,
               child: Container(
                 decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      spreadRadius: 0.5,
+                      blurRadius: 10,
+                      color: color[0],
+                    ),
+                  ],
                   borderRadius: BorderRadius.only(
                       bottomLeft: Radius.circular(w(37, context)),
                       bottomRight: Radius.circular(w(37, context))),
-                  color: color[0],
+                  color: Color(0xFF04294F),
                 ),
                 child: Column(
                   children: <Widget>[
@@ -198,7 +208,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 color: view ? color[0] : Colors.transparent,
                                 icon: Icon(
                                   Icons.remove_red_eye,
-                                  color: view ? Colors.white : color[0],
+                                  color: view ? color[1] : color[0],
                                 ),
                                 onpressed: () {
                                   setState(() {
@@ -214,7 +224,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 color: filter ? color[0] : Colors.transparent,
                                 icon: Icon(
                                   LineAwesomeIcons.filter,
-                                  color: filter ? Colors.white : color[0],
+                                  color: filter ? color[1] : color[0],
                                 ),
                                 onpressed: () {
                                   setState(() {
@@ -231,7 +241,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 icon: Icon(
                                   Icons.sort_by_alpha,
                                   //size: w(20, context),
-                                  color: sort ? Colors.white : color[0],
+                                  color: sort ? color[1] : color[0],
                                 ),
                                 onpressed: () {
                                   setState(() {
@@ -294,7 +304,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   'All Organisers',
                                   style: TextStyle(
                                       fontSize: !maceonly ? 17 : 15,
-                                      color: !maceonly ? color[0] : Colors.grey,
+                                      color: !maceonly
+                                          ? Color(0xFF04294F)
+                                          : Colors.grey,
                                       fontWeight: !maceonly
                                           ? FontWeight.bold
                                           : FontWeight.normal),
@@ -305,7 +317,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   });
                                   itemState.currentState.filter(4);
                                 },
-                                color: Color(0xFFFFD8CC)
+                                color: Color(0xFFFFF0CC)
                                     .withOpacity(!maceonly ? 1 : 0.5),
                               ),
                               FlatButton(
@@ -315,7 +327,9 @@ class _MyHomePageState extends State<MyHomePage> {
                                   'Mace Only',
                                   style: TextStyle(
                                       fontSize: maceonly ? 17 : 15,
-                                      color: maceonly ? color[0] : Colors.grey,
+                                      color: maceonly
+                                          ? Color(0xFF04294F)
+                                          : Colors.grey,
                                       fontWeight: maceonly
                                           ? FontWeight.bold
                                           : FontWeight.normal),
@@ -350,7 +364,8 @@ class _MyHomePageState extends State<MyHomePage> {
                               'List View',
                               style: TextStyle(
                                   fontSize: !grid ? 17 : 15,
-                                  color: !grid ? color[0] : Colors.grey,
+                                  color:
+                                      !grid ? Color(0xFF04294F) : Colors.grey,
                                   fontWeight: !grid
                                       ? FontWeight.bold
                                       : FontWeight.normal),
@@ -370,7 +385,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               'Grid View',
                               style: TextStyle(
                                   fontSize: grid ? 17 : 15,
-                                  color: grid ? color[0] : Colors.grey,
+                                  color: grid ? Color(0xFF04294F) : Colors.grey,
                                   fontWeight: grid
                                       ? FontWeight.bold
                                       : FontWeight.normal),
@@ -403,8 +418,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               'By Name',
                               style: TextStyle(
                                   fontSize: dropvalue == 1 ? 17 : 15,
-                                  color:
-                                      dropvalue == 1 ? color[0] : Colors.grey,
+                                  color: dropvalue == 1
+                                      ? Color(0xFF04294F)
+                                      : Colors.grey,
                                   fontWeight: dropvalue == 1
                                       ? FontWeight.bold
                                       : FontWeight.normal),
@@ -425,8 +441,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               'By Last Updated',
                               style: TextStyle(
                                   fontSize: dropvalue == 0 ? 17 : 15,
-                                  color:
-                                      dropvalue == 0 ? color[0] : Colors.grey,
+                                  color: dropvalue == 0
+                                      ? Color(0xFF04294F)
+                                      : Colors.grey,
                                   fontWeight: dropvalue == 0
                                       ? FontWeight.bold
                                       : FontWeight.normal),
@@ -453,9 +470,9 @@ class _MyHomePageState extends State<MyHomePage> {
                       child: Padding(
                         padding: EdgeInsets.symmetric(
                           vertical: h(10, context),
-                          horizontal: w(31, context),
+                          horizontal: w(20, context),
                         ),
-                        child: Items(dropvalue, grid,
+                        child: Items(widget.events, dropvalue, grid,
                             all ? 0 : upcoming ? 1 : 2, maceonly,
                             key: itemState),
                       ),

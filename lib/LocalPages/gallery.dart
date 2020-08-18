@@ -57,6 +57,7 @@ class _GalleryState extends State<Gallery> {
     return Scaffold(
         backgroundColor: Colors.black,
         appBar: AppBar(
+          backgroundColor: Color(0xFF04294F),
           title: Text('Gallery'),
         ),
         body: images == null

@@ -1,8 +1,10 @@
+import 'package:design/FIREBASE/database.dart';
 import 'package:design/LocalPages/addactivity.dart';
 import 'package:design/LocalPages/addevent.dart';
 import 'package:design/LocalPages/events.dart';
 import 'package:design/LocalPages/homepage.dart';
 import 'package:design/LocalPages/start.dart';
+import 'package:design/values.dart';
 import 'package:flutter/services.dart';
 import 'LocalPages/about.dart';
 import 'package:design/functions.dart';
@@ -23,7 +25,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Color(0xFF04294F),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      darkTheme: ThemeData(brightness: Brightness.dark),
+      //darkTheme: ThemeData(brightness: Brightness.dark),
       initialRoute: '/',
       routes: {
         '/': (context) => MainScreen(),
@@ -44,21 +46,26 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   Widget tobereturned = Start();
+  List<Event> events = [];
   bool first = true;
   bool connection;
   Future assign() async {
     connection = await testcon();
     if (connection) {
+      events = await CloudService().getevents();
       first = false;
-      await Future.delayed(Duration(milliseconds: 2700));
+      await Future.delayed(Duration(milliseconds: 6000));
       setState(() {
-        tobereturned = MyHomePage();
+        tobereturned = MyHomePage(events);
       });
     } else {}
   }
 
   @override
   Widget build(BuildContext context) {
+    // if (!bright(context)) {
+    //   color = darkcolor;
+    // }
     if (first) assign();
     return tobereturned;
   }

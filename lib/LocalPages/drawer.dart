@@ -33,7 +33,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
     return Drawer(
       child: Container(
         padding: EdgeInsets.only(left: w(34, context), right: w(34, context)),
-        color: color[0],
+        color: Color(0xFF04294F),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
@@ -50,7 +50,7 @@ class _DrawerObjectsState extends State<DrawerObjects> {
                   icon: Icon(
                     Icons.close,
                     size: h(24, context),
-                    color: color[0],
+                    color: Color(0xFF04294F),
                   ),
                   color: Colors.white,
                 ),
@@ -143,8 +143,10 @@ class _DrawerObjectsState extends State<DrawerObjects> {
                   child: FlatButton(
                     color: Colors.white,
                     child: check
-                        ? Text('Log Out', style: TextStyle(color: color[0]))
-                        : Text('Login', style: TextStyle(color: color[0])),
+                        ? Text('Log Out',
+                            style: TextStyle(color: Color(0xFF04294F)))
+                        : Text('Login',
+                            style: TextStyle(color: Color(0xFF04294F))),
                     onPressed: check
                         ? () async {
                             setState(() {

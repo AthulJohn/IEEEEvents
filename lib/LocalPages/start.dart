@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:design/functions.dart';
+import '../values.dart';
 
 // import 'package:design/values.dart';
 
@@ -27,7 +28,7 @@ class _StartState extends State<Start> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: color[2],
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
@@ -82,15 +83,15 @@ class _StartState extends State<Start> {
                     ),
                   ),
                   Container(
-                    width: w(125, context),
+                    width: w(135, context),
                     child: RotateAnimatedTextKit(
-                        totalRepeatCount: 1,
+                        totalRepeatCount: 4,
                         textStyle: TextStyle(
                           fontSize: h(25, context),
                         ),
                         pause: Duration(microseconds: 0),
                         duration: Duration(
-                          milliseconds: 450,
+                          milliseconds: 1200,
                         ),
                         text: [
                           '',
@@ -98,7 +99,7 @@ class _StartState extends State<Start> {
                           'Exploration',
                           'Engagement',
                           'Execution',
-                          'Volunteering'
+                          'Volunteering',
                         ]),
                   )
                 ],

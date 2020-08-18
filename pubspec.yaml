@@ -82,14 +82,11 @@ flutter:
   fonts:
     - family: Lato
       fonts:
-        - asset: fonts/Lato-Regular.ttf
-        - asset: fonts/Lato-Italic.ttf
-          style: italic
-        - asset: fonts/Lato-Bold.ttf
-          weight: 700
-    - family: bitfont
-      fonts:
-        - asset: fonts/PressStart2P-Regular.ttf
+        - asset: fonts/Ubuntu-Regular.ttf
+        # - asset: fonts/Lato-Italic.ttf
+        #   style: italic
+        # - asset: fonts/Lato-Bold.ttf
+        #   weight: 700
     - family: quicksand
       fonts:
         - asset: fonts/quicksand.ttf    

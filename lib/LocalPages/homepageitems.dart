@@ -9,9 +9,11 @@ import '../values.dart';
 final GlobalKey<_ItemsState> itemState = GlobalKey<_ItemsState>();
 
 class Items extends StatefulWidget {
+  final List<Event> eventss;
   final int sortval, select;
   final bool gridval, maceonly;
-  Items(this.sortval, this.gridval, this.select, this.maceonly, {Key key})
+  Items(this.eventss, this.sortval, this.gridval, this.select, this.maceonly,
+      {Key key})
       : super(key: key);
   @override
   _ItemsState createState() => _ItemsState();
@@ -103,7 +105,9 @@ class _ItemsState extends State<Items> {
   @override
   void initState() {
     super.initState();
-    assign();
+    unchangedevents = widget.eventss;
+    events = unchangedevents;
+    filter(3);
   }
 
   final _controller = ScrollController();
@@ -123,7 +127,7 @@ class _ItemsState extends State<Items> {
               return LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment(0.0, -0.90),
-                colors: <Color>[Colors.transparent, Colors.white],
+                colors: <Color>[Colors.transparent, color[2]],
               ).createShader(bounds);
             },
             blendMode: BlendMode.dstIn,
@@ -135,128 +139,153 @@ class _ItemsState extends State<Items> {
               onRefresh: _onRefresh,
               child: GridView.builder(
                   controller: _controller,
-                  padding: EdgeInsets.only(top: 10.0),
+                  padding: EdgeInsets.only(top: 12.0),
                   key: Key('${widget.gridval}'),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: widget.gridval ? 2 : 1,
                     childAspectRatio: widget.gridval ? 1 : 4.5,
                   ),
                   itemBuilder: (BuildContext context, int index) {
-                    return InkWell(
-                      onTap: () async {
-                        await Navigator.pushNamed(context, 'event',
-                                arguments: events[index])
-                            .whenComplete(() => assign());
-                      },
-                      child: Container(
-                        key: Key('${widget.gridval}'),
-                        constraints: BoxConstraints(
-                          maxHeight: widget.gridval ? 150 : 58,
-                        ),
-                        margin: EdgeInsets.only(bottom: h(15, context)),
-                        height:
-                            widget.gridval ? h(150, context) : h(58, context),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(w(13, context))),
-                          color: color[0].withOpacity(0.9),
-                          // Color(0xFF3b5f83)
-                          //     .withOpacity(0.8), //events[index].active == 1
-                          // ? events[index].done > 0
-                          //     ? Color(0xFFF0F0F0) //Color(0xFF6DD3F0)
-                          //     : Color(0xFFF0F0F0) //Color(0xFFFFCC51)
-                          // : Color(0xFFF0F0F0),
-                          child: widget.gridval
-                              ? Column(children: <Widget>[
-                                  Expanded(
-                                    flex: 5,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                              w(13, context)),
-                                          image: DecorationImage(
-                                              fit: BoxFit.cover,
-                                              image: CachedNetworkImageProvider(
-                                                '${events[index].theme}',
-                                              )
-                                              //  NetworkImage(
-                                              //     '${events[index].theme}')
-                                              ),
-                                          color: color[0]),
+                    return Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(w(25, context)),
+                          boxShadow: [
+                            BoxShadow(
+                              spreadRadius: 0.1,
+                              color: color[3],
+                              blurRadius: 5,
+                            )
+                          ]),
+                      key: Key('${widget.gridval}'),
+                      constraints: BoxConstraints(
+                        maxHeight: widget.gridval ? 150 : 58,
+                      ),
+                      margin: EdgeInsets.only(
+                          bottom: h(15, context),
+                          left: widget.gridval ? 5 : 11,
+                          right: widget.gridval ? 5 : 11),
+                      height: widget.gridval ? h(150, context) : h(58, context),
+                      child: InkWell(
+                        onTap: () async {
+                          await Navigator.pushNamed(context, 'event',
+                                  arguments: events[index])
+                              .whenComplete(() => assign());
+                        },
+                        child: Tooltip(
+                          message: events[index].name,
+                          child: Card(
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius:
+                                    BorderRadius.circular(w(25, context))),
+                            color: color[2], //color[0].withOpacity(0.9),
+                            // Color(0xFF3b5f83)
+                            //     .withOpacity(0.8), //events[index].active == 1
+                            // ? events[index].done > 0
+                            //     ? Color(0xFFF0F0F0) //Color(0xFF6DD3F0)
+                            //     : Color(0xFFF0F0F0) //Color(0xFFFFCC51)
+                            // : Color(0xFFF0F0F0),
+                            child: widget.gridval
+                                ? Column(children: <Widget>[
+                                    Expanded(
+                                      flex: 5,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                                w(16, context)),
+                                            image: DecorationImage(
+                                                fit: BoxFit.cover,
+                                                image:
+                                                    CachedNetworkImageProvider(
+                                                  '${events[index].theme}',
+                                                )
+                                                //  NetworkImage(
+                                                //     '${events[index].theme}')
+                                                ),
+                                            color: color[0]),
+                                      ),
                                     ),
-                                  ),
-                                  Expanded(
-                                      flex: 2,
-                                      child: Container(
-                                          padding: EdgeInsets.only(
-                                              top: 5, right: 10, left: 10),
-                                          child: Text('${events[index].name}',
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 20,
-                                              )))),
-                                  Expanded(
-                                      child: Container(
-                                          // padding: EdgeInsets.all(10),
-                                          child: Text(
-                                              events[index].active == 1
-                                                  ? events[index].done > 0
-                                                      ? 'ongoing'
-                                                      : 'upcoming'
-                                                  : 'completed',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: events[index].active == 1
+                                    Expanded(
+                                        flex: 2,
+                                        child: Container(
+                                            padding: EdgeInsets.only(
+                                                top: 5, right: 10, left: 10),
+                                            child: Text('${events[index].name}',
+                                                softWrap: false,
+                                                overflow: TextOverflow.fade,
+                                                style: TextStyle(
+                                                  color: color[0],
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 18,
+                                                )))),
+                                    Expanded(
+                                        child: Container(
+                                            // padding: EdgeInsets.all(10),
+                                            child: Text(
+                                                events[index].active == 1
                                                     ? events[index].done > 0
-                                                        ? Color(0xFFff823a)
-                                                        : Color(0xFF2aa666)
-                                                    : Colors.grey,
-                                                fontSize: 13,
-                                              ))))
-                                ])
-                              : Stack(
-                                  children: <Widget>[
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: w(15, context),
-                                          vertical: 8),
-                                      child: Align(
-                                        heightFactor: 1.5,
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
+                                                        ? 'ONGOING'
+                                                        : 'UPCOMING'
+                                                    : 'COMPLETED',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: events[index].active ==
+                                                          1
+                                                      ? events[index].done > 0
+                                                          ? color[0]
+                                                              .withOpacity(0.5)
+                                                          : color[4]
+                                                              .withOpacity(0.8)
+                                                      : Colors.grey,
+                                                  fontSize: 11,
+                                                ))))
+                                  ])
+                                : Container(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: w(15, context),
+                                        vertical: h(13, context)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        // Align(
+                                        //   heightFactor: 1.5,
+                                        //   alignment: Alignment.centerLeft,
+                                        // child:
+                                        Text(
                                           '${events[index].name}',
                                           overflow: TextOverflow.ellipsis,
                                           style: TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20,
+                                            color: color[0],
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 18,
+                                            // ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                        right: 5,
-                                        bottom: 5,
-                                        child: Text(
+                                        SizedBox(width: w(10, context)),
+                                        Text(
                                             events[index].active == 1
                                                 ? events[index].done > 0
-                                                    ? 'ongoing          '
-                                                    : 'upcoming          '
-                                                : 'completed          ',
+                                                    ? 'ONGOING '
+                                                    : 'UPCOMING'
+                                                : 'COMPLETED',
                                             style: TextStyle(
-                                              fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.w700,
                                               color: events[index].active == 1
                                                   ? events[index].done > 0
-                                                      ? Color(0xFFff823a)
-                                                      : Color(0xFF2aa666)
+                                                      ? color[0]
+                                                          .withOpacity(0.5)
+                                                      : color[4]
+                                                          .withOpacity(0.8)
                                                   : Colors.grey,
-                                              fontSize: 13,
-                                            )))
-                                  ],
-                                ),
+                                              fontSize: 11,
+                                            ))
+                                      ],
+                                    ),
+                                  ),
+                          ),
                         ),
                       ),
                     );
@@ -272,6 +301,7 @@ class _ItemsState extends State<Items> {
                 children: <Widget>[
                   Container(
                       height: h(300, context),
+                      width: w(300, context),
                       child: Image.asset('assets/empty.gif')),
                   Text("There's Nothing Here...",
                       style: TextStyle(fontSize: h(30, context))),

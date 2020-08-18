@@ -55,13 +55,10 @@ class CloudService {
   Future editData(
       Event event, List activities, List added, List removed) async {
     int len = 0;
+    String theme = event.theme;
     List imgs = [];
-    var stat = await eventCollection
-        .document(event.name)
-        .collection('imagepath')
-        .document('0')
-        .get();
-    if (stat.exists) {
+
+    if (getl(removed) > 0) {
       final paths = await eventCollection
           .document(event.name)
           .collection('imagepath')
@@ -86,31 +83,34 @@ class CloudService {
                 .delete();
           }
         }
-      len = paths.documents.length - len;
     }
-    if (len == 0 || (len != 0 && getl(added) != 0)) {
+    final paths = await eventCollection
+        .document(event.name)
+        .collection('imagepath')
+        .getDocuments();
+    len = paths.documents.length - len;
+    if (len == 0) theme = '!';
+    if (getl(added) > 0 || len == 0) {
+      //}
+      //if (len == 0 || (len != 0 && getl(added) != 0)) {
       imgs = await uploadFile(event.name, added);
-      if (len != 0 || getl(added) != 0) {
-        for (int i = 0; i < imgs.length; i++) {
-          await eventCollection
-              .document(event.name)
-              .collection('images')
-              .document('${len + i}')
-              .setData({'url': imgs[i]});
-          await eventCollection
-              .document(event.name)
-              .collection('imagepath')
-              .document('${i + len}')
-              .setData(
-                  {'path': '${event.name}/${Path.basename(added[i].path)}'});
-        }
+      //if (len != 0 || getl(added) != 0) {
+      for (int i = 0; i < imgs.length; i++) {
+        await eventCollection
+            .document(event.name)
+            .collection('images')
+            .document('${len + i}')
+            .setData({'url': imgs[i]});
+        await eventCollection
+            .document(event.name)
+            .collection('imagepath')
+            .document('${i + len}')
+            .setData({'path': '${event.name}/${Path.basename(added[i].path)}'});
       }
-    } else {
-      imgs.add(event.theme);
     }
-    //}
+    if (len == 0 || theme == '!') theme = imgs[0];
     await eventCollection.document(event.name).updateData({
-      'theme': imgs[0],
+      'theme': theme,
       'desc': event.desc,
       'update': DateTime.now().toIso8601String(),
       'active': event.active,

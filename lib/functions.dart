@@ -37,16 +37,19 @@ double w(double no, context) {
   return no * (MediaQuery.of(context).size.width) / 375;
 }
 
+bool bright(context) {
+  print('funfn');
+  return MediaQuery.of(context).platformBrightness == Brightness.light;
+}
+
 Future<bool> testcon() async {
   {
     try {
       final result = await InternetAddress.lookup('google.com');
       if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        print('trueee');
         return true;
       }
     } on SocketException catch (_) {
-      print('Executed');
       return false;
     }
   }

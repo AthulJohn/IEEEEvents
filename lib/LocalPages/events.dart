@@ -73,10 +73,12 @@ class _EventsState extends State<Events> {
             ],
           ),
           Positioned(
+            left: 10,
+            top: 10,
             child: SafeArea(
                 child: RoundButton(
                     color: color[0],
-                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    icon: Icon(Icons.arrow_back, color: color[1]),
                     onpressed: () {
                       Navigator.pop(context);
                     },
@@ -146,7 +148,7 @@ class _ActListState extends State<ActList> {
                             content: Text('Could not launch the url !')));
                       }
                     },
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18, color: color[5]),
                   );
                 }),
               ),
@@ -210,7 +212,7 @@ class _ActListState extends State<ActList> {
                                 color: color[0],
                                 icon: Icon(
                                   Icons.edit,
-                                  color: Colors.white,
+                                  color: color[1],
                                 ),
                                 onpressed: () async {
                                   await Navigator.push(
@@ -226,7 +228,7 @@ class _ActListState extends State<ActList> {
                                 color: color[0],
                                 icon: Icon(
                                   Icons.delete_outline,
-                                  color: Colors.white,
+                                  color: color[1],
                                 ),
                                 onpressed: () async {
                                   await showDialog(
@@ -279,7 +281,7 @@ class _ActListState extends State<ActList> {
                                 icon: Icon(
                                   Icons.add,
                                   size: w(20, context),
-                                  color: Colors.white,
+                                  color: color[1],
                                 ),
                                 onpressed: () async {
                                   await Navigator.pushNamed(context, 'addact',
@@ -301,16 +303,26 @@ class _ActListState extends State<ActList> {
                       AnimatedIconButton(
                         duration: Duration(milliseconds: 300),
                         size: 22,
-                        startBackgroundColor: color[0],
-                        endBackgroundColor: Colors.white,
-                        endIcon: Icon(
-                          Icons.close,
-                          color: color[0],
-                        ),
-                        startIcon: Icon(
-                          Icons.keyboard_arrow_left,
-                          color: Colors.white,
-                        ),
+                        startBackgroundColor: open ? color[1] : color[0],
+                        endBackgroundColor: open ? color[0] : color[1],
+                        endIcon: open
+                            ? Icon(
+                                Icons.keyboard_arrow_left,
+                                color: color[1],
+                              )
+                            : Icon(
+                                Icons.close,
+                                color: color[0],
+                              ),
+                        startIcon: open
+                            ? Icon(
+                                Icons.close,
+                                color: color[0],
+                              )
+                            : Icon(
+                                Icons.keyboard_arrow_left,
+                                color: color[1],
+                              ),
                         onPressed: () {
                           setState(() {
                             open = !open;
@@ -367,7 +379,7 @@ class _ActListState extends State<ActList> {
                           activities[ind - 2].index, widget.event.done);
                     },
                     background: Container(
-                      color: Colors.white,
+                      color: color[2],
                       child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -386,7 +398,7 @@ class _ActListState extends State<ActList> {
                           header: Container(
                             width: w(330, context),
                             child: Card(
-                              color: color[0],
+                              color: Color(0xFF04294F),
                               elevation: 2,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(13)),
@@ -577,7 +589,7 @@ class _ActListState extends State<ActList> {
                                                           'Could not launch the url !')));
                                             }
                                           },
-                                          textAlign: TextAlign.center,
+                                          textAlign: TextAlign.left,
                                           style: TextStyle(fontSize: 18),
                                         ),
                                       );
