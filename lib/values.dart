@@ -8,7 +8,7 @@ List<Color> darkcolor = [
   Colors.white38,
   Colors.white70,
 ];
-List<Color> color = [
+List<Color> lightcolor = [
   Color(0xFF04294F),
   Colors.white,
   Colors.white,
@@ -16,3 +16,4 @@ List<Color> color = [
   Colors.grey,
   Colors.grey[600],
 ];
+List<Color> color = lightcolor;

@@ -11,6 +11,7 @@ import 'drawer.dart';
 import '../functions.dart';
 import '../values.dart';
 import '../Widgets/RoundButton.dart';
+import '../Storage/sqlite.dart';
 import 'homepageitems.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -56,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    // checkacti("Single Day Webinars");
     return Scaffold(
       backgroundColor: color[2],
       resizeToAvoidBottomInset: false,
@@ -480,7 +482,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),

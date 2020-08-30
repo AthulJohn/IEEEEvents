@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../FIREBASE/database.dart';
+import '../Storage/database.dart';
 import 'loadingpage.dart';
 import '../Widgets/RoundButton.dart';
 import '../functions.dart';

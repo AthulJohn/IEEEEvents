@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:design/values.dart';
 import 'package:design/functions.dart';
-import '../FIREBASE/database.dart';
+import '../Storage/database.dart';
 import '../Widgets/RoundButton.dart';
 import 'loadingpage.dart';
 

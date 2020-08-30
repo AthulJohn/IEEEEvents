@@ -17,6 +17,20 @@ class Event {
   Event(this.index, this.name, this.desc, this.createdate, this.updatedate,
       this.theme, this.images, this.lind,
       {this.active = 0, this.done = 0, this.mace});
+  Map<String, dynamic> toMap() {
+    return {
+      'id': index,
+      'name': name,
+      'desc': desc,
+      'theme': theme,
+      'active': active,
+      'done': done,
+      'createdate': createdate.toIso8601String(),
+      'updatedate': updatedate.toIso8601String(),
+      'lastind': lind,
+      'mace': mace ? 1 : 0
+    };
+  }
 }
 
 Future<bool> logincheck() async {

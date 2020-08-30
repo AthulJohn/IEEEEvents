@@ -3,8 +3,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'login.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import '../values.dart';
+// import 'package:line_awesome_flutter/line_awesome_flutter.dart';
+// import 'package:lite_rolling_switch/lite_rolling_switch.dart';
+// import '../values.dart';
 import '../functions.dart';
 import '../Widgets/RoundButton.dart';
 
@@ -19,8 +20,8 @@ class DrawerObjects extends StatefulWidget {
 class _DrawerObjectsState extends State<DrawerObjects> {
   final String maceurl = 'https://ieee.macehub.in/';
   final String newsurl =
-      ' https://issuu.com/melvinchooranolil/docs/ieee_mace_sb_official_newsletter_-_the_broadcast__';
-  bool check = false;
+      'https://issuu.com/melvinchooranolil/docs/ieee_mace_sb_official_newsletter_-_the_broadcast__';
+  bool check = false, darktheme;
   bool loginload = false;
   @override
   void initState() {
@@ -125,11 +126,14 @@ class _DrawerObjectsState extends State<DrawerObjects> {
             //       iconOn: LineAwesomeIcons.sun,
             //       onChanged: (val) {
             //         darktheme = val;
+            //         setState(() {
+            //           color=dark
+            //         });
             //       },
             //     )
-            //     //   ],
-            //     // ),
-            //     ),
+            //   ],
+            // ),
+            // ),
             Expanded(
               flex: 80,
               child: SizedBox(),

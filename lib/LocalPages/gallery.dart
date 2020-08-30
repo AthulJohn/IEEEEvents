@@ -5,7 +5,7 @@ import 'package:photo_view/photo_view.dart';
 
 import 'package:flutter/services.dart';
 import '../functions.dart';
-import '../FIREBASE/database.dart';
+import '../Storage/database.dart';
 
 class Gallery extends StatefulWidget {
   final name, theme;

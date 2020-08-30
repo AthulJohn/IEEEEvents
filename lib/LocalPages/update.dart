@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../values.dart';
 import '../functions.dart';
-import '../FIREBASE/database.dart';
+import '../Storage/database.dart';
 import 'loadingpage.dart';
 
 import 'dart:io';

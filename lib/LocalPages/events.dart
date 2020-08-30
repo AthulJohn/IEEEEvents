@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:animated_icon_button/animated_icon_button.dart';
 import 'package:design/functions.dart';
 import 'package:design/values.dart';
+import '../Storage/sqlite.dart';
 // import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
-import 'package:design/FIREBASE/database.dart';
+import 'package:design/Storage/database.dart';
 import 'package:intl/intl.dart';
 import 'update.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -98,14 +99,21 @@ class ActList extends StatefulWidget {
 }
 
 class _ActListState extends State<ActList> {
-  List<Event> activities;
+  List<Event> activities, localactivities;
   bool descac = false, open = false;
   bool delete = false, loading = false, loged = false;
   String errortext = '';
-  void check() async {
+  void getfromlocal() async {
     loged = await logincheck();
-    activities =
-        await CloudService().getactivities(widget.event.name); //.then((val) {
+    localactivities =
+        await activitiesFromStorage(widget.event.name.replaceAll(' ', 'Þ'));
+    activities = localactivities;
+  }
+
+  void check() async {
+    if (await testcon())
+      activities =
+          await CloudService().getactivities(widget.event.name); //.then((val) {
     //   setState(() {});
     //   return;
     // });
@@ -114,12 +122,15 @@ class _ActListState extends State<ActList> {
         (a, b) => a.updatedate.compareTo(b.updatedate),
       );
     if (this.mounted) setState(() {});
+    await disposeActivities(widget.event.name.replaceAll(' ', 'Þ'),
+        localactivities ?? [], activities ?? []);
   }
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    getfromlocal();
+  }
 
   @override
   Widget build(BuildContext context) {
