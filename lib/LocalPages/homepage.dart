@@ -82,13 +82,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    Expanded(child: SizedBox(), flex: 9),
+                    const Expanded(child: SizedBox(), flex: 9),
                     Expanded(
                         flex: 9,
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: <Widget>[
-                            Expanded(
+                            const Expanded(
                               flex: 20,
                               child: SizedBox(),
                             ),
@@ -109,7 +109,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                               flex: 40,
                             ),
-                            Expanded(
+                            const Expanded(
                               child: SizedBox(),
                               flex: 232,
                             ),
@@ -145,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             )
                           ],
                         )),
-                    Expanded(
+                    const Expanded(
                       flex: 8,
                       child: SizedBox(),
                     ),
@@ -153,7 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         flex: 11,
                         child: Row(
                           children: <Widget>[
-                            Expanded(child: SizedBox(), flex: 31),
+                            const Expanded(child: SizedBox(), flex: 31),
                             Expanded(
                                 flex: 239,
                                 child: Text(
@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       color: Colors.white,
                                       fontSize: h(25, context)),
                                 )),
-                            Expanded(child: SizedBox(), flex: 30),
+                            const Expanded(child: SizedBox(), flex: 30),
                             Expanded(
                               flex: 46,
                               // child: Container(
@@ -183,10 +183,10 @@ class _MyHomePageState extends State<MyHomePage> {
                                     )
                                   : Container(),
                             ),
-                            Expanded(flex: 30, child: SizedBox())
+                            const Expanded(flex: 30, child: SizedBox())
                           ],
                         )),
-                    Expanded(child: SizedBox(), flex: 6)
+                    const Expanded(child: SizedBox(), flex: 6)
                   ],
                 ),
               ),

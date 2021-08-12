@@ -4,6 +4,7 @@ import 'package:design/LocalPages/addevent.dart';
 import 'package:design/LocalPages/events.dart';
 import 'package:design/LocalPages/homepage.dart';
 import 'package:design/LocalPages/start.dart';
+import 'package:design/Storage/message.dart';
 import 'package:design/Storage/sqlite.dart';
 import 'package:dynamic_theme/dynamic_theme.dart';
 import 'package:design/values.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/material.dart';
 
 void main() {
   runApp(MyApp());
+  PushNotificationsManager().init();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 }
 
